@@ -29,6 +29,8 @@ As pastas que ainda não têm conteúdo contêm apenas um arquivo `.gitkeep`.
 
 ## Ambiente
 
+## Ambiente
+
 Requer o repositório do produto clonado ao lado deste. No PowerShell, a partir
 da pasta deste repositório:
 
@@ -37,13 +39,41 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 
-$produto = "..\leitura_automatizada_mostradores_energia"
-python -m pip install -r "$produto\requirements-lock-cu126.txt"
-python -m pip install -e "$produto[dev]" --no-deps
+# Versões exatas: produto mais as dependências da pesquisa
+python -m pip install -r requirements-lock-pesquisa.txt
+
+# O produto, em modo editável, sem buscar outras dependências
+python -m pip install -e "..\leitura_automatizada_mostradores_energia[dev]" --no-deps
 
 Copy-Item .env.example .env   # preencha o caminho dos dados
 python -m pytest
 ```
+
+### Notebooks
+
+Os notebooks rodam no VS Code, com o kernel do `.venv` deste repositório.
+Notebooks que exibem fotos ou nomes de arquivos do cliente ficam na pasta
+`local/`, que é ignorada pelo Git.
+
+### Dependências
+
+- `requirements-pesquisa.txt`: dependências diretas da pesquisa, além das do
+  produto.
+- `requirements-lock-pesquisa.txt`: versões exatas de todo o ambiente. Contém
+  todos os pacotes do travamento do produto, nas mesmas versões.
+
+Para acrescentar uma dependência, inclua-a em `requirements-pesquisa.txt`,
+instale usando o travamento do produto como restrição e gere de novo o
+travamento da pesquisa:
+
+```powershell
+python -m pip install -r requirements-pesquisa.txt `
+    -c ..\leitura_automatizada_mostradores_energia\requirements-lock-cu126.txt
+python -m pip freeze --all --exclude-editable
+```
+
+A saída do `freeze` substitui as linhas de pacotes do travamento, mantendo o
+cabeçalho.
 
 ## Licença
 
