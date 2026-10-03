@@ -1,0 +1,10 @@
+# Dependências diretas da pesquisa, além das do produto.
+# O produto e as dependências dele vêm do travamento do produto
+# e da instalação em modo editável (README, seção "Ambiente").
+# Versões exatas de tudo ficam em requirements-lock-pesquisa.txt.
+
+# Kernel para executar notebooks no VS Code (decisão da T1.1)
+ipykernel>=6.29
+
+# Gráficos e exibição de imagens na inspeção visual (pasta local/)
+matplotlib>=3.10
