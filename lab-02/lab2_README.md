@@ -301,7 +301,7 @@ e "Necessita de verificação" (detector, leitor e validadores).
 | --- | --- |
 | Modelo (perfil CPU) | SSDlite320 com MobileNetV3-Large (`torchvision`): 3,44 M de parâmetros, 0,58 GFLOPS |
 | Candidato (perfil GPU) | Faster R-CNN com MobileNetV3-Large-FPN (`torchvision`) |
-| Classes | Display digital, display ciclométrico e placa (número do medidor). A função aparece no próprio display digital e é tratada pelo leitor e pelos validadores, sem classe própria (provisório, ET5) |
+| Classes | Display digital, display ciclométrico e placa (número do medidor). A função aparece só no display digital, nunca no ciclométrico; por isso é lida no recorte do display digital, sem classe própria de detecção (decisão final na ET5) |
 | Resolução | Entrada de 320 × 320 px, a partir da foto nativa de 360 × 480. O detector só localiza: a leitura é feita no recorte da foto original, porque a redução deixaria cada dígito com cerca de 7 px (guia, seção 4) |
 | Licença | BSD-3 |
 
@@ -421,7 +421,7 @@ com o limiar da E2 aplicado sem ajuste (seção 7 do notebook):
   o leitor e o verificador; detectar a divergência é tarefa da ET5 a ET7;
 - 8 de 15 medidores ilegíveis e a única foto de "outros" foram rejeitados.
 
-Achado de dados: 43% dos medidores entre os zeros são ilegíveis, contra
-cerca de 30% (29,8%) na amostra aleatória. Um zero sem nota costuma vir de uma foto
+Achado de dados: 43% dos medidores entre os zeros são ilegíveis (15 de
+35), contra 29,8% na amostra aleatória (seção 7 do notebook). Um zero sem nota costuma vir de uma foto
 que não permitia a leitura. Os 14 zeros do lote de teste seguem lacrados até
 a ET4.
