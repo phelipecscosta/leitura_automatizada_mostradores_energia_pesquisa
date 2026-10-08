@@ -1,7 +1,8 @@
 # Esquema de rótulos — Lab02
 
-Versão: 1 (antes do piloto). O histórico de revisões, com o motivo de cada
+Versão: 2 (após o piloto). O histórico de revisões, com o motivo de cada
 mudança, fica na última seção.
+
 
 ## 1. Princípio
 
@@ -76,12 +77,47 @@ um deles.
 
 ## 7. Exemplos-limite
 
-Dois por classe: a foto que quase é e a que quase não é. Citados pelo
-código pseudônimo, com descrição em texto; nunca como imagem. A preencher
-no piloto (T2.5).
+Dois por fronteira, um em cada sentido. Citados pelo código pseudônimo, com
+descrição em texto; nunca como imagem.
+
+### Medidor × outros
+
+- **F-0482fcbf7800**. Parece medidor: tons de cinza, traços retos e quadrados
+  escuros. É outros: parede de azulejos com um bilhete ao centro; nenhum
+  medidor pode ser apontado (seção 3; bilhete é outros).
+- **F-64885ea97b45**. Parece outros: fundo claro com uma figura escura no
+  centro, que lembra um buraco ou um poço. É medidor: a foto está escura, mas
+  a luz de LED sinaliza o aparelho, que pode ser apontado (seção 3).
+
+### Digital × ciclométrico
+
+- **F-d7625174368e**. Parece digital: caixa quadrada, de aspecto moderno.
+  É ciclométrico: a leitura está nos tambores numerados, de cor mais escura
+  (seção 4).
+- **F-95f1257deb1f**. Parece ciclométrico: caixa redonda e visor escuro.
+  É digital: o visor é um LCD de fundo escuro, variante menos comum do LCD
+  cinza (seção 4).
+
+### Legível × ilegível
+
+- **F-492ed77c7da8**. Parece legível: o mostrador ciclométrico está visível e
+  pouco desfocado. É ilegível: os tambores estão perto da virada e a foto foi
+  tirada inclinada; nenhum dígito se distingue com segurança (9, 8 ou 0), nem
+  com autocontraste, e a placa não tem dígito legível (seção 5). Ilustra
+  também a passada 1 sem o BaseExtracao (seção 2): a impressão de que a
+  leitura era conhecida veio só do valor registrado.
+- **F-6249d58c5d12**. Parece ilegível: dígitos de baixo contraste, de formatos
+  semelhantes, difíceis de distinguir na foto original. É legível: com o
+  autocontraste fixo, os dígitos da leitura são lidos com segurança (seção 5).
+
+### Indeterminado
+
+Nenhuma foto do piloto recebeu o tipo indeterminado. A classe continua
+definida (seção 4), mas sem exemplo observado até esta versão.
 
 ## 8. Histórico de revisões
 
 | Versão | Data | Mudança | Motivo |
 | --- | --- | --- | --- |
 | 1 | 05/10/2026 | Versão inicial | — |
+| 2 | 08/10/2026 | Exemplos-limite (seção 7); definições inalteradas | Piloto às cegas com 50 fotos e dois rotuladores: kappa de 1,00 em medidor × outros, 0,95 na cena com 4 classes e 0,91 em legibilidade. As 6 discordâncias foram revisadas em conjunto e todas tiveram origem operacional (erro de digitação ou de atenção), e não ambiguidade das definições. Em campos visíveis, que não era objeto do kappa, "leitura" e "número" ficaram com kappa de 0,55 e 0,48, pelo mesmo motivo |
