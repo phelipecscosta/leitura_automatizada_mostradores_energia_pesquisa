@@ -29,7 +29,6 @@ As pastas que ainda não têm conteúdo contêm apenas um arquivo `.gitkeep`.
 
 ## Ambiente
 
-## Ambiente
 
 Requer o repositório do produto clonado ao lado deste. No PowerShell, a partir
 da pasta deste repositório:
@@ -43,7 +42,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements-lock-pesquisa.txt
 
 # O produto, em modo editável, sem buscar outras dependências
-python -m pip install -e "..\leitura_automatizada_mostradores_energia[dev]" --no-deps
+python -m pip install -e "..\leitura_automatizada_mostradores_energia[dev,training]" --no-deps
 
 Copy-Item .env.example .env   # preencha o caminho dos dados
 python -m pytest
