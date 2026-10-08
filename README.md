@@ -44,6 +44,14 @@ python -m pip install -r requirements-lock-pesquisa.txt
 # O produto, em modo editável, sem buscar outras dependências
 python -m pip install -e "..\leitura_automatizada_mostradores_energia[dev,training]" --no-deps
 
+
+# O pacote de treino do produto (pasta training/) fica fora do pacote
+# instalado. Um arquivo .pth no .venv acrescenta a raiz do produto ao caminho
+# de importação. Refaça este passo sempre que recriar o .venv.
+$sitePackages = python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])"
+$productRoot = (Resolve-Path ..\leitura_automatizada_mostradores_energia).Path
+Set-Content (Join-Path $sitePackages "meter_reader_training.pth") $productRoot -Encoding ascii
+
 Copy-Item .env.example .env   # preencha o caminho dos dados
 python -m pytest
 ```
