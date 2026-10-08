@@ -114,3 +114,9 @@ como revisão datada, com o motivo, sem apagar o texto original.
 - Curva da métrica otimizadora com 25%, 50%, 75% e 100% do treino de cada
   dobra. Se a métrica subir entre 75% e 100% mais que a meia-largura do
   seu intervalo, os rótulos são registrados como insuficientes.
+
+### 2.9 Revisões do protocolo
+
+| Data | Revisão | Motivo |
+| --- | --- | --- |
+| 08/10/2026 | Na seção 2.1, a especificidade se apoia em 17 fotos de "outros" da amostra aleatória fora do teste, e não em 18. A 18ª está no conjunto de estresse (22/05) e fica fora das métricas principais | Contagem conferida pelo carregador de rótulos (T3.1), antes de qualquer treino. Nenhuma regra muda |
