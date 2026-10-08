@@ -122,3 +122,65 @@ como revisão datada, com o motivo, sem apagar o texto original.
 | 08/10/2026 | Na seção 2.1, a especificidade se apoia em 17 fotos de "outros" da amostra aleatória fora do teste, e não em 18. A 18ª está no conjunto de estresse (22/05) e fica fora das métricas principais | Contagem conferida pelo carregador de rótulos (T3.1), antes de qualquer treino. Nenhuma regra muda |
 | 08/10/2026 | Seção 2.3: a espinha dorsal deixa de ser única. MobileNetV3-Large e EfficientNet-B0 (pesos ImageNet do `torchvision`) são comparadas. Seção 2.7: ordem fixa das comparações: (1) espinha dorsal, as duas a 224 px, empate segue a MobileNetV3-Large; (2) resolução, nativa × 224 px, só com a espinha vencedora, empate segue 224 px; (3) a configuração profunda vencedora × baseline, empate segue o profundo. Todas com a regra de vitória da seção 2.7 | Escolha da espinha dorsal com evidência medida, e não só por custo. Revisão feita antes de qualquer treino. O desempate pela MobileNetV3-Large se apoia no menor custo no piso da E04 e na mesma família do detector do perfil CPU (E07) |
 | 08/10/2026 | Seção 2.3, baseline: calculada sobre a mesma imagem que o modelo profundo recebe a 224 px (realce fixo, 299 × 224). HOG em tons de cinza, 9 orientações, células de 32 × 32 px, blocos de 2 × 2 células, normalização L2-Hys (1.728 dimensões); histograma conjunto HSV com 8 × 4 × 4 faixas, normalizado (128); brilho médio, contraste e variância do Laplaciano em tons de cinza (3). Total: 1.859 dimensões. Seções 2.3 e 2.4: nos dois modelos, as características são padronizadas por escore z com a média e o desvio do treino de cada dobra. Seção 2.4: o indeterminado recebe o peso médio de um medidor de tipo conhecido (média dos pesos de digital e ciclométrico, ponderada pelas contagens) | Lacunas do protocolo preenchidas antes de qualquer execução do D3. Células de 32 px espelham o campo de cada posição do último mapa das CNNs (B1) e mantêm a dimensão na ordem das características profundas. A padronização só com o treino evita vazamento da dobra de avaliação |
+| 08/10/2026 | Nova seção 2.10: saída de decisão da triagem (escore único de rejeição), métricas da curva cobertura × risco, metas Y = 10% e R = 0,97 verificadas pelo limite superior do intervalo, e reformulação da R3 da E09 | Itens E1 e E2 da rubrica. A R3 mede leituras aprovadas, que a triagem não produz (E23). Fixado antes de qualquer calibração ou curva |
+
+
+### 2.10 Confiança e recusa (E1 e E2)
+
+Fixado em 08/10/2026, antes de qualquer calibração ou curva cobertura × risco.
+
+**Saída de decisão.** A triagem só decide rejeitar. Seguir adiante é o
+caminho padrão e seguro, porque a foto ainda passa pelo detector, pelo
+leitor ou pela verificação humana.
+
+- Escore de rejeição: P(rejeitável) = p_outros + (1 − p_outros) × p_ilegível,
+  com as probabilidades calibradas (E1). Como p_ilegível é condicional a
+  ser medidor, o escore é a probabilidade total de dois eventos disjuntos:
+  não ser medidor, ou ser medidor ilegível.
+- Regra: rejeita se P(rejeitável) ≥ t. Destino: "Rejeitadas / Outros" se
+  p_outros ≥ (1 − p_outros) × p_ilegível; senão, "Rejeitadas / Baixa
+  qualidade".
+- Probabilidades: média das três sementes, como na seção 2.7.
+
+**Métricas** (amostra aleatória, predições fora da dobra; os zeros ficam
+fora, conforme a seção 2.1):
+
+| Métrica | Definição | Papel |
+| --- | --- | --- |
+| Rejeitável | Foto de "outros" ou medidor ilegível | Universo da cobertura |
+| Cobertura da rejeição | Rejeitáveis rejeitadas ÷ rejeitáveis | Maximizar |
+| Risco | Medidores legíveis rejeitados ÷ fotos rejeitadas | ≤ Y |
+| Perda | Medidores legíveis rejeitados ÷ medidores legíveis | ≤ 1 − R |
+| Destino trocado | Medidores ilegíveis enviados a "Outros" ÷ medidores ilegíveis rejeitados | Só reportado |
+
+- Só a rejeição de um medidor legível é erro, porque descarta informação.
+  Um medidor ilegível enviado a "Outros" não descarta informação e fica
+  fora do risco: o princípio 1 da E09 é lido pela perda de informação, e
+  não pela pasta de destino.
+- Uma foto de "outros" que segue adiante não é erro nesta curva
+  (tolerância da E09).
+- A cobertura da rejeição não é a cobertura da E09 (aprovadas ÷ legíveis),
+  que só existe com o leitor e os validadores.
+
+**Metas.** Y = 10% e R = 0,97; a precisão da rejeição (P da E09) é
+1 − Y = 90%.
+
+**Verificação.** Risco e perda pelo limite superior unilateral de 95%
+(Clopper-Pearson). Entre os limiares t que cumprem as duas metas, vale o
+de maior cobertura da rejeição. Se nenhum cumprir, a meta é declarada fora
+da curva: o README informa a maior cobertura possível com cada restrição
+isolada e quantas rejeições sem erro tornariam a meta demonstrável.
+
+**Teste (ET4).** O limiar é aplicado sem ajuste, e cobertura, risco e
+perda são reportados com intervalo. O tamanho do teste limita o risco que
+ele consegue demonstrar; o limite é declarado com a contagem exata de
+rejeitáveis.
+
+**Reformulação da R3 (E09 e E23).** A R3 mede leituras aprovadas e só pode
+ser avaliada com o leitor e os validadores (ET7). No Lab02, a restrição de
+risco da curva cobertura × risco é a definida acima.
+
+**Se a meta não couber.** O resultado é registrado como insuficiência de
+rótulos para a decisão automática, com a conta acima. A ampliação da
+rotulagem fica para depois, com Y e R mantidos e o lote de teste intocado.
+
