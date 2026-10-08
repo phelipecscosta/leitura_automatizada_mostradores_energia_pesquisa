@@ -8,3 +8,6 @@ ipykernel>=6.29
 
 # Gráficos e exibição de imagens na inspeção visual (pasta local/)
 matplotlib>=3.10
+
+# Botões e campos da ferramenta de rotulagem (T2.5), no notebook em local/
+ipywidgets>=8.1
