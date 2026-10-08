@@ -13,6 +13,9 @@ As arquiteturas originalmente apresentadas, A (divisão de classes,
 melhorada será construída depois, se for oportuno e viável, e comparada com
 a B no mesmo lote de teste e na mesma métrica. As principais melhorias foram
 a verificação da leitura guiada pelo CSV e a retirada do YOLO.
+Como a arquitetura mudou, os itens N0 a N4 da rubrica foram combinados com
+os itens V0 a V4 (originalmente dirigidos ao grupo VoltLens) e adaptados ao
+estado real do projeto. As respostas estão na seção 3.
 
 ### 1.1 Resposta às críticas recebidas
 
@@ -425,3 +428,209 @@ Achado de dados: 43% dos medidores entre os zeros são ilegíveis (15 de
 35), contra 29,8% na amostra aleatória (seção 7 do notebook). Um zero sem nota costuma vir de uma foto
 que não permitia a leitura. Os 14 zeros do lote de teste seguem lacrados até
 a ET4.
+
+## 4. Resultados
+
+Números do notebook `lab02.ipynb`, executado do início ao fim. Validação por
+lote deixado de fora nos lotes 20/05, 21/05 e 22/05, só na amostra aleatória
+(225 fotos); o lote de teste (03/07) segue lacrado até a ET4.
+
+### 4.1 Concordância entre rotuladores (C3)
+
+50 fotos rotuladas às cegas por duas pessoas, em arquivos separados e sem
+contato até as duas terminarem.
+
+| Variável | Concordância | Kappa | IC 95% |
+| --- | --- | --- | --- |
+| Medidor × outros | 100% | 1,00 | [1,00; 1,00] |
+| Cena (4 classes) | 98% | 0,95 | [0,80; 1,00] |
+| Digital × resto | 98% | 0,94 | [0,79; 1,00] |
+| Ciclométrico × resto | 98% | 0,92 | [0,70; 1,00] |
+| Outros × resto | 100% | 1,00 | [1,00; 1,00] |
+| Legibilidade (46 medidores) | 97,8% | 0,91 | [0,65; 1,00] |
+
+Todas as classes ficaram acima de 0,6; nenhuma definição precisou ser
+reescrita por ambiguidade (as revisões do esquema estão em
+`rotulos/lab2_esquema.md`). O indeterminado não apareceu nas 50 fotos, e o
+seu kappa não pôde ser medido. As 6 discordâncias foram todas operacionais
+(teclas vizinhas) e foram adjudicadas em conjunto; o kappa acima é o da
+rotulagem bruta.
+
+### 4.2 Partição sem vazamento (C4)
+
+Partição cronológica por lote: treino 20/05 e 21/05, validação 22/05,
+teste 03/07.
+
+| Par de conjuntos | Fotos (= leituras) em comum | Medidores com foto em comum |
+| --- | --- | --- |
+| Treino × validação | 0 | 0 |
+| Treino × teste | 0 | 0 |
+| Validação × teste | 0 | 0 |
+
+Contando todos os números de medidor listados nos CSV, inclusive os de
+leituras sem foto, há 6, 2 e 1 em comum entre os pares. Nenhum deles tem
+foto nos dois conjuntos: como a unidade de análise é a foto, não há
+vazamento. Cada foto é uma leitura: o sufixo do nome não agrupa fotos da
+mesma leitura nesta base.
+
+### 4.3 O modelo em código (B1, B2 e B3)
+
+**B1.** A tabela de formas, com uma foto real nas duas resoluções, está na
+seção 4 do notebook. A 224 px no lado menor (entrada de 3 × 299 × 224), o
+último mapa da MobileNetV3-Large tem 960 × 10 × 7: cada posição resume cerca
+de 32 × 32 px da imagem de entrada.
+
+**B2.**
+
+| Espinha dorsal | Parâmetros totais | Treináveis (extração) | Treináveis (ajuste fino) |
+| --- | --- | --- | --- |
+| MobileNetV3-Large | 2.975.796 | 3.844 | 2.975.796 |
+| EfficientNet-B0 | 4.012.672 | 5.124 | 4.012.672 |
+
+Em extração, o modelo treina 774 vezes menos parâmetros que em ajuste fino:
+é o que torna viável treinar com cerca de 150 fotos por dobra.
+
+**B3.**
+
+| Cabeça | Saídas | Ativação | Perda | Classes exclusivas? |
+| --- | --- | --- | --- | --- |
+| Cena | 3 (digital, ciclométrico, outros) | Softmax | Entropia cruzada com peso por classe; o indeterminado usa a perda parcial −log(p_digital + p_ciclométrico) | Sim: pelo esquema, uma foto tem um tipo só (com vários medidores, vale o principal) |
+| Legibilidade | 1 (ilegível) | Sigmoide | BCE com `pos_weight`, mascarada em "outros" | Independente do tipo: um medidor digital pode ser legível ou ilegível |
+
+Exemplo real de que tipo e legibilidade coexistem: a foto `<PSEUDÔNIMO>` é
+um medidor digital ilegível. Se a legibilidade fosse uma classe da softmax
+de cena, essa foto teria de ser "digital" ou "ilegível", e perderia uma das
+duas informações. As perdas recebem logits: nenhuma ativação é aplicada
+antes delas.
+
+### 4.4 Sanidade (D1 e D2)
+
+**D1.** Perda inicial com cabeças aleatórias, em 32 fotos (4
+indeterminadas, 3 de outros, 7 ilegíveis), sem pesos de classe:
+
+| Espinha dorsal | Cena obtida | Referência | Legibilidade obtida | Referência |
+| --- | --- | --- | --- | --- |
+| MobileNetV3-Large | 1,213 | 1,012 | 0,707 | 0,693 (ln 2) |
+| EfficientNet-B0 | 1,044 | 1,012 | 0,657 | 0,693 (ln 2) |
+
+A referência da cena não é ln 3 = 1,099 por causa do rótulo parcial: para
+as 4 indeterminadas, a saída uniforme vale −ln(2/3) = 0,405, e
+(28 × 1,099 + 4 × 0,405) / 32 = 1,012. As perdas obtidas ficam próximas das
+referências: não há ativação aplicada antes da perda nem inicialização
+anormal.
+
+**D2.** Sobreajuste de 16 fotos reais (3 de outros, 3 indeterminadas, 3
+ciclométricas, 7 digitais), com os hiperparâmetros do protocolo:
+
+| Espinha dorsal | Perda inicial | Perda final | Acerto de cena | Acerto de legibilidade |
+| --- | --- | --- | --- | --- |
+| MobileNetV3-Large | 1,943 | 0,0136 | 16/16 | 13/13 |
+| EfficientNet-B0 | 1,876 | 0,0058 | 16/16 | 13/13 |
+
+### 4.5 Extração de características × baseline (D3)
+
+Três sementes; métrica otimizadora: média da AP de "outros" e da AP de
+"ilegível", fora da dobra.
+
+| Configuração | Métrica (média ± desvio) | AP outros | AP ilegível | IC 95% |
+| --- | --- | --- | --- | --- |
+| MobileNetV3-Large, 224 px | 0,719 ± 0,032 | 0,60 | 0,83 | [0,611; 0,830] |
+| EfficientNet-B0, 224 px | 0,685 ± 0,024 | 0,51 | 0,86 | [0,576; 0,817] |
+| MobileNetV3-Large, nativa | 0,706 ± 0,029 | 0,55 | 0,86 | [0,596; 0,825] |
+| Baseline (HOG, cor, qualidade) | 0,464 ± 0,012 | 0,16 | 0,76 | [0,403; 0,556] |
+
+| Comparação (na ordem do protocolo) | Diferença | IC 95% | Resultado |
+| --- | --- | --- | --- |
+| 1. Large × B0 | +0,027 | [−0,079; +0,128] | Empate: segue a Large |
+| 2. Nativa × 224 px | −0,012 | [−0,090; +0,066] | Empate: segue 224 px |
+| 3. Profundo × baseline | +0,256 | [+0,104; +0,378] | Vence o profundo |
+
+Por que o profundo vence: a vantagem está na cena. A AP de "outros" sobe de
+0,16 (o acaso seria 0,076) para 0,60; na legibilidade, de 0,76 para 0,83.
+Distinguir um medidor de uma caixa fechada ou de um papel exige
+características de forma e contexto que o HOG e o histograma de cor não
+capturam; a nitidez, que decide boa parte da legibilidade, a baseline já
+mede diretamente (contraste e Laplaciano).
+
+Sobreajuste: a perda final de treino fica em cerca de 0,02, contra 0,90 de
+perda logarítmica fora da dobra na cena. As probabilidades saem confiantes
+demais, o que motivou a calibração (seção 4.7).
+
+### 4.6 Suficiência de rótulos (bônus)
+
+| Fração do treino de cada dobra | 25% | 50% | 75% | 100% |
+| --- | --- | --- | --- | --- |
+| Métrica otimizadora | 0,588 | 0,662 | 0,650 | 0,719 |
+
+O ganho entre 75% e 100% (+0,069) é menor que a meia-largura do intervalo
+(0,109): pela regra do protocolo, os rótulos são suficientes. A regra, porém,
+tem pouco poder com 17 fotos de "outros", e a curva sobe sem platô. A leitura
+honesta é que não há evidência de saturação: mais rótulos provavelmente
+melhorariam a cena.
+
+### 4.7 Confiança (E1)
+
+Diagramas de confiabilidade na seção 7 do notebook. Calibração aninhada por
+lote (cada lote calibrado com temperaturas ajustadas nos outros dois).
+
+| Medida | Antes | Só temperatura | Correção dos pesos + temperatura |
+| --- | --- | --- | --- |
+| Perda log. da cena | 0,881 | 0,676 | 0,528 |
+| Perda log. da legibilidade | 0,445 | 0,378 | 0,354 |
+| ECE de P(rejeitável) | 0,096 | 0,163 | 0,091 |
+| ECE de P(outros) | 0,090 | 0,153 | 0,079 |
+| ECE de P(ilegível \| medidor) | 0,097 | 0,087 | 0,048 |
+
+Temperaturas de implantação: 2,231 (cena) e 1,961 (legibilidade), estáveis
+entre os lotes (cena de 2,07 a 2,35; legibilidade de 1,79 a 2,17).
+
+Leitura:
+
+- A temperatura sozinha melhorou as perdas, mas **piorou** o ECE de "outros"
+  e de P(rejeitável). Diagnóstico: o treino com pesos de classe infla as
+  classes raras (a média prevista de P(outros) era 2,2 vezes a prevalência
+  de 0,076), e a temperatura sobre 3 classes puxa todas as probabilidades em
+  direção a 1/3, agravando o efeito.
+- A correção dos pesos (subtrair o log do peso de cada classe do logit, sem
+  nenhum parâmetro novo) desfez o problema. Ela entrou no protocolo como
+  revisão datada, feita depois desse resultado e declarada como tal
+  (seção 2.9).
+- Resta um viés: a média prevista de P(outros) ainda é 0,155. Uma única
+  temperatura não corrige deslocamentos; fica como limitação.
+- Com cerca de 200 fotos em 10 faixas, o ECE tem um piso de acaso da ordem
+  de 0,03 a 0,05: o 0,048 da legibilidade está perto desse piso.
+
+### 4.8 Cobertura × risco (E2)
+
+**Meta (seção 2.10): cobertura da rejeição ≥ 38,0% com risco ≤ 10% e perda
+≤ 3%**, ambos pelo limite superior unilateral de 95%. Gráfico na seção 7 do
+notebook.
+
+| Item | Valor |
+| --- | --- |
+| Rejeitáveis / medidores legíveis | 79 / 146 |
+| Limiar escolhido | P(rejeitável) ≥ 0,966 |
+| Rejeitadas | 30, todas rejeitáveis |
+| Risco | 0 (limite superior 9,5%) |
+| Perda | 0 (limite superior 2,0%) |
+| Cobertura por lote | 35,7%, 50,0% e 31,0% |
+| Destino trocado | 7 de 15 medidores ilegíveis rejeitados iriam para "Outros" |
+
+A meta cabe na curva, mas sem folga:
+
+- Eram necessárias 29 rejeições sem erro para provar risco ≤ 10%, e havia
+  30 rejeitáveis acima do medidor legível de maior escore.
+- A margem entre o limiar e esse medidor é de 3,7 × 10⁻⁴ no escore: num
+  lote novo, um medidor legível nessa faixa seria perdido.
+- O limiar foi escolhido e certificado nas mesmas predições, o que torna o
+  certificado otimista. Separar os dados deixaria as duas partes pequenas
+  demais; o teste da ET4 é a verificação independente, mas, com cerca de 19
+  rejeitáveis, não consegue provar o risco de 10%.
+- O destino trocado não é erro pela definição adotada (nenhuma informação se
+  perde), mas são fotos de medidor em "Rejeitadas / Outros"; é o mesmo viés
+  residual de P(outros) da seção 4.7.
+
+Tradução para o negócio: cerca de 35% das fotos são rejeitáveis, e a
+triagem rejeita sozinha 38% delas, ou seja, cerca de 13% de todas as fotos
+saem do fluxo sem custo de analista. O restante segue adiante, o que é
+seguro. Dar folga a esse resultado exige ampliar a rotulagem.
