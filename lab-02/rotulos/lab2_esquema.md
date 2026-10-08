@@ -1,6 +1,6 @@
 # Esquema de rótulos — Lab02
 
-Versão: 2 (após o piloto). O histórico de revisões, com o motivo de cada
+Versão: 3 (após o piloto). O histórico de revisões, com o motivo de cada
 mudança, fica na última seção.
 
 
@@ -66,13 +66,13 @@ um deles.
 | --- | --- | --- |
 | nome_arquivo | código pseudônimo | Nunca o nome real |
 | lote | data do lote (AAAA-MM-DD) | |
-| rotulador | código do rotulador | |
+| rotulador | R1, R2 ou ADJ | ADJ: rótulo final de uma foto rotulada às cegas e revisada em conjunto. O rótulo final de uma foto é o ADJ, se existir; senão, o do R1 |
 | cena_n1 | medidor, outros | |
 | cena_n2 | digital, ciclometrico, indeterminado | Vazio quando cena_n1 = outros |
 | legibilidade | legivel, ilegivel | Vazio quando cena_n1 = outros |
 | incerto | sim, nao | sim: o rótulo é o melhor palpite, mas há dúvida real |
 | campos_visiveis | leitura, numero, ambos, nenhum | Campos com ao menos um dígito legível. Vazio quando cena_n1 = outros. nenhum se e somente se legibilidade = ilegivel |
-| leitura_confere | sim, nao, impossivel | Passada 2. Comparação numérica com a leitura do BaseExtracao (sem zeros à esquerda). impossivel: a leitura não é legível por completo. Vazio quando cena_n1 = outros |
+| leitura_confere | sim, nao, impossivel | Passada 2. Comparação numérica com a leitura do BaseExtracao (sem zeros à esquerda). impossivel: a leitura não é legível por completo. Vazio quando cena_n1 = outros, para o R2 (que não faz a passada 2) e para fotos órfãs (sem linha no BaseExtracao, portanto sem valor de referência) |
 | observacao | vazia, multiplos, ponteiros, outro | Vocabulário fechado. Nunca texto livre |
 
 ## 7. Exemplos-limite
@@ -121,3 +121,4 @@ definida (seção 4), mas sem exemplo observado até esta versão.
 | --- | --- | --- | --- |
 | 1 | 05/10/2026 | Versão inicial | — |
 | 2 | 08/10/2026 | Exemplos-limite (seção 7); definições inalteradas | Piloto às cegas com 50 fotos e dois rotuladores: kappa de 1,00 em medidor × outros, 0,95 na cena com 4 classes e 0,91 em legibilidade. As 6 discordâncias foram revisadas em conjunto e todas tiveram origem operacional (erro de digitação ou de atenção), e não ambiguidade das definições. Em campos visíveis, que não era objeto do kappa, "leitura" e "número" ficaram com kappa de 0,55 e 0,48, pelo mesmo motivo |
+| 3 | 08/10/2026 | Regras das colunas rotulador e leitura_confere (seção 6); definições inalteradas | Rotulador ADJ para as adjudicações do piloto. Fotos órfãs, presentes no treino, não têm leitura de referência: leitura_confere fica vazio, para não entrar na taxa de erro das anotações de campo |
