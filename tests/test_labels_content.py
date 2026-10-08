@@ -26,7 +26,7 @@ ALLOWED = {
     "rotulador": {"R1", "R2", "ADJ"},  # ADJ: rótulo final de uma foto revisada em conjunto
     "cena_n1": {"medidor", "outros"},
     "incerto": {"", "sim", "nao"},
-    "observacao": {"", "vazia", "multiplos", "ponteiros", "outro"},
+    "observacao": {"", "vazia", "multiplos", "ponteiros", "outro", "outra_funcao"},
 }
 METER_ONLY = {  # só para medidor; vazias quando cena_n1 = outros
     "cena_n2": {"digital", "ciclometrico", "indeterminado"},
@@ -58,6 +58,10 @@ def validate_labels(text: str) -> list[str]:
         visible = row["campos_visiveis"]
         if is_meter and visible and (visible == "nenhum") != (row["legibilidade"] == "ilegivel"):
             errors.append(f"Linha {line}: campos_visiveis incoerente com legibilidade.")
+        # Outra função no display: só em digital, e a leitura de consumo não é comparável
+        if row["observacao"] == "outra_funcao" and (
+                row["cena_n2"] != "digital" or row["leitura_confere"] in ("sim", "nao")):
+            errors.append(f"Linha {line}: outra_funcao incoerente com tipo ou leitura_confere.")
         key = (row["nome_arquivo"], row["rotulador"])
         if key in seen:
             errors.append(f"Linha {line}: foto repetida para o mesmo rotulador.")
@@ -108,3 +112,11 @@ def test_adjudication_with_both_labelers_passes():
 def test_adjudication_without_double_labeling_fails():
     adj_only = VALID.replace(",R1,", ",ADJ,")
     assert validate_labels(f"{HEADER}\n{VALID}\n{adj_only}\n")  # falta o R2
+
+def test_other_function_rules():
+    ok = VALID.replace(",sim,", ",impossivel,") + "outra_funcao"
+    assert validate_labels(f"{HEADER}\n{ok}\n") == []
+    compared = VALID + "outra_funcao"  # outra função com leitura comparada: incoerente
+    cyclometric = ok.replace("digital", "ciclometrico")  # ciclométrico não tem função
+    for row in (compared, cyclometric):
+        assert validate_labels(f"{HEADER}\n{row}\n")
