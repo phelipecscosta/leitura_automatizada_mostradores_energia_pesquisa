@@ -123,6 +123,7 @@ como revisão datada, com o motivo, sem apagar o texto original.
 | 08/10/2026 | Seção 2.3: a espinha dorsal deixa de ser única. MobileNetV3-Large e EfficientNet-B0 (pesos ImageNet do `torchvision`) são comparadas. Seção 2.7: ordem fixa das comparações: (1) espinha dorsal, as duas a 224 px, empate segue a MobileNetV3-Large; (2) resolução, nativa × 224 px, só com a espinha vencedora, empate segue 224 px; (3) a configuração profunda vencedora × baseline, empate segue o profundo. Todas com a regra de vitória da seção 2.7 | Escolha da espinha dorsal com evidência medida, e não só por custo. Revisão feita antes de qualquer treino. O desempate pela MobileNetV3-Large se apoia no menor custo no piso da E04 e na mesma família do detector do perfil CPU (E07) |
 | 08/10/2026 | Seção 2.3, baseline: calculada sobre a mesma imagem que o modelo profundo recebe a 224 px (realce fixo, 299 × 224). HOG em tons de cinza, 9 orientações, células de 32 × 32 px, blocos de 2 × 2 células, normalização L2-Hys (1.728 dimensões); histograma conjunto HSV com 8 × 4 × 4 faixas, normalizado (128); brilho médio, contraste e variância do Laplaciano em tons de cinza (3). Total: 1.859 dimensões. Seções 2.3 e 2.4: nos dois modelos, as características são padronizadas por escore z com a média e o desvio do treino de cada dobra. Seção 2.4: o indeterminado recebe o peso médio de um medidor de tipo conhecido (média dos pesos de digital e ciclométrico, ponderada pelas contagens) | Lacunas do protocolo preenchidas antes de qualquer execução do D3. Células de 32 px espelham o campo de cada posição do último mapa das CNNs (B1) e mantêm a dimensão na ordem das características profundas. A padronização só com o treino evita vazamento da dobra de avaliação |
 | 08/10/2026 | Nova seção 2.10: saída de decisão da triagem (escore único de rejeição), métricas da curva cobertura × risco, metas Y = 10% e R = 0,97 verificadas pelo limite superior do intervalo, e reformulação da R3 da E09 | Itens E1 e E2 da rubrica. A R3 mede leituras aprovadas, que a triagem não produz (E23). Fixado antes de qualquer calibração ou curva |
+| 08/10/2026 | Nova seção 2.11 (calibração). Seções 2.7 e 2.10: a partir da calibração, as três sementes são combinadas pela média dos logits, e não pela média das probabilidades. As comparações do D3, já feitas com a média das probabilidades, não são refeitas | Com cabeças lineares sobre as mesmas características, a média dos logits equivale a uma cabeça linear com a média dos pesos: o modelo avaliado na E1 e na E2 é o mesmo que é exportado e entregue. Fixado antes de qualquer calibração |
 
 
 ### 2.10 Confiança e recusa (E1 e E2)
@@ -184,3 +185,39 @@ risco da curva cobertura × risco é a definida acima.
 rótulos para a decisão automática, com a conta acima. A ampliação da
 rotulagem fica para depois, com Y e R mantidos e o lote de teste intocado.
 
+### 2.11 Calibração (E1)
+
+Fixado em 08/10/2026, antes de qualquer calibração.
+
+**Entrada.** Logits fora da dobra das três sementes, combinados pela média
+(seção 2.9, revisão de 08/10), só da amostra aleatória (os zeros ficam
+fora, conforme a seção 2.1).
+
+**Temperatura.** Uma por cabeça, T > 0, aplicada como logit ÷ T:
+
+- Cena: minimiza a perda logarítmica da softmax, com a regra parcial do
+  indeterminado (−log(p_digital + p_ciclométrico)).
+- Legibilidade: minimiza a perda logarítmica da sigmoide, só nos medidores.
+- Sem pesos de classe: a calibração deve refletir as frequências reais.
+
+**Validação aninhada por lote.** Para cada lote, as temperaturas são
+ajustadas nos outros dois lotes e aplicadas ao lote deixado de fora. O ECE
+"depois" e todas as métricas da E2 (seção 2.10) usam essas predições. As
+temperaturas de implantação são ajustadas com os três lotes e reportadas
+ao lado das três intermediárias.
+
+**ECE.** Binário, 10 faixas de largura igual, média das diferenças
+ponderada pelo número de fotos em cada faixa, com intervalo de 95% por
+bootstrap (2.000 reamostragens).
+
+| Quantidade | Rótulo | Fotos | Papel |
+| --- | --- | --- | --- |
+| P(rejeitável) (seção 2.10) | Rejeitável | Todas | Principal |
+| P(outros) | Outros | Todas | Secundária |
+| P(ilegível \| medidor) | Ilegível | Medidores | Secundária |
+
+Para cada quantidade: ECE e diagrama de confiabilidade antes e depois da
+temperatura.
+
+**Limitação declarada.** As temperaturas vêm de cabeças treinadas com dois
+lotes e são aplicadas ao modelo final, treinado com três (E25).
