@@ -119,3 +119,7 @@ desktop.ini
 # Notebooks e arquivos de inspeção visual que exibem fotos do cliente.
 # Tudo o que está nesta pasta nunca sai da máquina local.
 /local/
+
+# Exceção nominal (decisão E13): rótulos do Lab02, com nomes pseudonimizados.
+# Só este caminho exato. O conteúdo é verificado por teste.
+!/lab-02/rotulos/lab2_rotulos.csv

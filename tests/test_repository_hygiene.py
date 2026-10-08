@@ -25,7 +25,10 @@ GITIGNORE_CASES = [
     (".env", True),                               # segredos
     ("local/inspecao_fotos.ipynb", True),         # notebook com fotos: nunca versionado
     ("local/qualquer_script.py", True),           # qualquer arquivo em local/
-    ("lab-02/rotulos/lab2_rotulos.csv", True),    # bloqueado até a pseudonimização (ET2)
+    ("lab-02/rotulos/lab2_rotulos.csv", False),   # exceção nominal: rótulos pseudonimizados
+    ("lab-02/rotulos/lab2_rotulos_real.csv", True),  # outro CSV na mesma pasta: bloqueado
+    ("lab-02/lab2_rotulos.csv", True),            # mesmo nome em outra pasta: bloqueado
+    ("local/lab2_rotulos.csv", True),             # cópia em local/: bloqueada
     (".env.example", False),                      # modelo de configuração
     ("lab-02/lab02.ipynb", False),                # entrega obrigatória da rubrica
     ("lab-02/lab2_README.md", False),             # entrega obrigatória da rubrica
@@ -50,6 +53,8 @@ def _git(*args: str) -> subprocess.CompletedProcess[str]:
         ["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=False
     )
 
+# Exceções nominais, uma a uma, com aprovação explícita (instruções 6.2)
+ALLOWED_TRACKED = {PurePosixPath("lab-02/rotulos/lab2_rotulos.csv")}
 
 def _tracked_files() -> list[PurePosixPath]:
     """Lista os arquivos versionados (inclusive os já preparados para commit)."""
@@ -60,6 +65,8 @@ def _tracked_files() -> list[PurePosixPath]:
 
 def _is_forbidden(path: PurePosixPath) -> bool:
     """Indica se um arquivo não pode estar no repositório."""
+    if path in ALLOWED_TRACKED:
+        return False
     if path.suffix.lower() in FORBIDDEN_SUFFIXES:
         return True
     # .env e variações com segredos; só o modelo .env.example é permitido
