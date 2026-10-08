@@ -23,7 +23,7 @@ CODE_RE = re.compile(r"F-[0-9a-f]{12}")
 DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 # Valores permitidos; "" = vazio. As colunas de um só rotulador podem ficar vazias.
 ALLOWED = {
-    "rotulador": {"R1", "R2"},
+    "rotulador": {"R1", "R2", "ADJ"},  # ADJ: rótulo final de uma foto revisada em conjunto
     "cena_n1": {"medidor", "outros"},
     "incerto": {"", "sim", "nao"},
     "observacao": {"", "vazia", "multiplos", "ponteiros", "outro"},
@@ -62,6 +62,10 @@ def validate_labels(text: str) -> list[str]:
         if key in seen:
             errors.append(f"Linha {line}: foto repetida para o mesmo rotulador.")
         seen.add(key)
+    # Uma adjudicação só existe onde houve dupla rotulagem: exige R1 e R2 da mesma foto
+    for code in {c for c, r in seen if r == "ADJ"}:
+        if not {(code, "R1"), (code, "R2")} <= seen:
+            errors.append("Adjudicação sem as duas rotulagens originais.")
     return errors
 
 
@@ -94,4 +98,13 @@ def test_versioned_labels_file():
     if not LABELS_PATH.exists():
         pytest.skip("lab2_rotulos.csv ainda não existe.")
     assert validate_labels(LABELS_PATH.read_text(encoding="utf-8")) == []
-    
+
+def test_adjudication_with_both_labelers_passes():
+    rows = [VALID.replace(",R1,", f",{r},") for r in ("R1", "R2", "ADJ")]
+    rows[1] = rows[1].replace(",sim,", ",,")  # R2 não faz a passada 2
+    assert validate_labels(HEADER + "\n" + "\n".join(rows) + "\n") == []
+
+
+def test_adjudication_without_double_labeling_fails():
+    adj_only = VALID.replace(",R1,", ",ADJ,")
+    assert validate_labels(f"{HEADER}\n{VALID}\n{adj_only}\n")  # falta o R2
