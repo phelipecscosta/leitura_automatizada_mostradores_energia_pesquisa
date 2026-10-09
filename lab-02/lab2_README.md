@@ -241,6 +241,10 @@ a N4 e V0 a V4 da rubrica foram combinados e adaptados à arquitetura B
 aperfeiçoada, conforme o estado real do projeto: a triagem está treinada e
 avaliada; o detector e o leitor serão construídos nas etapas seguintes.
 
+Os itens L1 a L4 da rubrica (famílias de leitores, benchmark do cliente,
+métrica da leitura e plano de ajuste fino) se aplicam ao leitor, construído
+na ET6, e não a esta entrega.
+
 ### 3.1 N0 e V0 — Bloco profundo: triagem por transferência
 
 O primeiro bloco profundo é a triagem "medidor (digital, ciclométrico) /
@@ -496,7 +500,7 @@ de 32 × 32 px da imagem de entrada.
 | EfficientNet-B0 | 4.012.672 | 5.124 | 4.012.672 |
 
 Em extração, o modelo treina 774 vezes menos parâmetros que em ajuste fino:
-é o que torna viável treinar com cerca de 150 fotos por dobra.
+é o que torna viável treinar com cerca de 170 fotos por dobra (de 169 a 178, zeros incluídos).
 
 **B3.**
 
@@ -568,6 +572,7 @@ demais, o que motivou a calibração (seção 4.7).
 
 | Fração do treino de cada dobra | 25% | 50% | 75% | 100% |
 | --- | --- | --- | --- | --- |
+| Fotos de treino por dobra | 42 a 44 | 84 a 89 | 127 a 134 | 169 a 178 |
 | Métrica otimizadora | 0,588 | 0,662 | 0,650 | 0,719 |
 
 O ganho entre 75% e 100% (+0,069) é menor que a meia-largura do intervalo

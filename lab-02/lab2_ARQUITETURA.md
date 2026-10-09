@@ -123,12 +123,12 @@ foi corrigido na calibração, subtraindo o log dos pesos (seção 9).
 
 | Alternativa | Por que foi descartada |
 | --- | --- |
-| Reamostragem | O treino é em lote completo (cerca de 150 fotos): toda foto entra em todo passo |
+| Reamostragem | O treino é em lote completo (cerca de 170 fotos): toda foto entra em todo passo |
 | *Focal loss* | Mais um hiperparâmetro, sem busca permitida pelo protocolo; o problema não é excesso de exemplos fáceis, e sim poucos exemplos raros |
 
 ## 8. Capacidade × rótulos
 
-300 fotos rotuladas: 225 aleatórias fora do teste, das quais cerca de 150
+300 fotos rotuladas: 225 aleatórias fora do teste, das quais cerca de 170
 por dobra de treino, e só 17 de "outros". Estratégia: extração de
 características, com 3.844 parâmetros treináveis de 2.975.796 (774 vezes
 menos que o ajuste fino).
@@ -215,3 +215,4 @@ uso comercial dos pesos pré-treinados no ImageNet, antes da ET9.
 | Platt ou deslocamento ajustado na calibração | Parâmetros ajustados depois de ver o resultado; a correção dos pesos não ajusta nenhum |
 | Retreino pelo cliente | Fora do MVP; máquina e operadores do cliente não comportam (decisão de projeto) |
 | Abrir o teste no Lab02 | Ele é aberto uma única vez, na ET4, para as triagens de DL e de ML juntas |
+| Treinar a legibilidade com degradação sintética | A legibilidade tem rótulo manual real em 300 fotos (kappa 0,91). O rótulo sintético resolveria uma falta de rótulo que não existe aqui, e exigiria provar que a rede aprendeu o defeito, e não o artefato da degradação |
