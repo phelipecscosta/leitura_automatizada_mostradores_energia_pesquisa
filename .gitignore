@@ -123,3 +123,8 @@ desktop.ini
 # Exceção nominal (decisão E13): rótulos do Lab02, com nomes pseudonimizados.
 # Só este caminho exato. O conteúdo é verificado por teste.
 !/lab-02/rotulos/lab2_rotulos.csv
+
+# Exceção nominal (aprovada em 08/10/2026): diagramas das arquiteturas
+# revisadas, sem dados do cliente. Só estes dois caminhos exatos.
+!/lab-02/anexos/lab2_arquitetura_A_divisao_de_classes.jpg
+!/lab-02/anexos/lab2_arquitetura_B_multiclasse.jpg

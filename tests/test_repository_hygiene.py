@@ -29,6 +29,10 @@ GITIGNORE_CASES = [
     ("lab-02/rotulos/lab2_rotulos_real.csv", True),  # outro CSV na mesma pasta: bloqueado
     ("lab-02/lab2_rotulos.csv", True),            # mesmo nome em outra pasta: bloqueado
     ("local/lab2_rotulos.csv", True),             # cópia em local/: bloqueada
+    ("lab-02/anexos/lab2_arquitetura_A_divisao_de_classes.jpg", False),  # exceção: diagrama
+    ("lab-02/anexos/lab2_arquitetura_B_multiclasse.jpg", False),         # exceção: diagrama
+    ("lab-02/anexos/foto_medidor.jpg", True),     # outra imagem na pasta de anexos: bloqueada
+    ("lab-02/lab2_arquitetura_B_multiclasse.jpg", True),  # mesmo nome fora de anexos/: bloqueado
     (".env.example", False),                      # modelo de configuração
     ("lab-02/lab02.ipynb", False),                # entrega obrigatória da rubrica
     ("lab-02/lab2_README.md", False),             # entrega obrigatória da rubrica
@@ -54,7 +58,11 @@ def _git(*args: str) -> subprocess.CompletedProcess[str]:
     )
 
 # Exceções nominais, uma a uma, com aprovação explícita (instruções 6.2)
-ALLOWED_TRACKED = {PurePosixPath("lab-02/rotulos/lab2_rotulos.csv")}
+ALLOWED_TRACKED = {
+    PurePosixPath("lab-02/rotulos/lab2_rotulos.csv"),
+    PurePosixPath("lab-02/anexos/lab2_arquitetura_A_divisao_de_classes.jpg"),
+    PurePosixPath("lab-02/anexos/lab2_arquitetura_B_multiclasse.jpg"),
+}
 
 def _tracked_files() -> list[PurePosixPath]:
     """Lista os arquivos versionados (inclusive os já preparados para commit)."""
