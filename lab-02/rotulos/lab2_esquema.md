@@ -1,7 +1,6 @@
 # Esquema de rótulos — Lab02
 
-Versão: 4 (após o piloto). O histórico de revisões, com o motivo de cada
-mudança, fica na última seção.
+Versão: 5 (após a rotulagem completa).
 
 
 ## 1. Princípio
@@ -110,10 +109,27 @@ descrição em texto; nunca como imagem.
   semelhantes, difíceis de distinguir na foto original. É legível: com o
   autocontraste fixo, os dígitos da leitura são lidos com segurança (seção 5).
 
-### Indeterminado
+### Indeterminado × tipo conhecido
 
-Nenhuma foto do piloto recebeu o tipo indeterminado. A classe continua
-definida (seção 4), mas sem exemplo observado até esta versão.
+- **F-eb6e3c96f15c**. Parece digital: caixa retangular, de aspecto moderno.
+  É indeterminado: o visor é escuro e tem marcas brancas, que podem ser a
+  numeração dos tambores de um ciclométrico ou sujeira e respingos de tinta
+  sobre o visor escuro de um digital (há respingos iguais ao redor da
+  caixa). Nenhum indício decide o tipo; o autocontraste escurece o visor e
+  realça as marcas, mas não as distingue (seção 4).
+- **F-1768dabc776b**. Parece indeterminado: nenhum dígito se lê. É
+  ciclométrico: o contorno dos tambores, de fundo preto e numeração branca,
+  é visível, e o autocontraste o deixa mais nítido. O tipo se decide pela
+  forma do mostrador, e não pela leitura (seção 4); a legibilidade é um
+  julgamento separado (seção 5).
+
+O mesmo indício, visor escuro com marcas brancas, aparece nos dois
+exemplos. A fronteira passa por saber se as marcas formam o padrão dos
+tambores.
+
+Na rotulagem completa, todos os 28 indeterminados são também ilegíveis e
+sem campo visível: os casos de "só a placa visível" e de medidor de
+ponteiros, previstos na seção 4, não ocorreram na amostra.
 
 ## 8. Histórico de revisões
 
@@ -123,3 +139,4 @@ definida (seção 4), mas sem exemplo observado até esta versão.
 | 2 | 08/10/2026 | Exemplos-limite (seção 7); definições inalteradas | Piloto às cegas com 50 fotos e dois rotuladores: kappa de 1,00 em medidor × outros, 0,95 na cena com 4 classes e 0,91 em legibilidade. As 6 discordâncias foram revisadas em conjunto e todas tiveram origem operacional (erro de digitação ou de atenção), e não ambiguidade das definições. Em campos visíveis, que não era objeto do kappa, "leitura" e "número" ficaram com kappa de 0,55 e 0,48, pelo mesmo motivo |
 | 3 | 08/10/2026 | Regras das colunas rotulador e leitura_confere (seção 6); definições inalteradas | Rotulador ADJ para as adjudicações do piloto. Fotos órfãs, presentes no treino, não têm leitura de referência: leitura_confere fica vazio, para não entrar na taxa de erro das anotações de campo |
 | 4 | 08/10/2026 | Código outra_funcao; definição de impossivel em leitura_confere (seção 6) | Na revisão das 31 leituras divergentes, 22 eram fotos de medidores digitais com o display em outra função (sobretudo 103, de forma parecida com 03). A leitura de consumo não aparecia, então a divergência não era erro de anotação do leiturista |
+| 5 | 08/10/2026 | Exemplos-limite do indeterminado (seção 7); definições inalteradas | O piloto não teve nenhum indeterminado; a rotulagem completa teve 28. Exemplos escolhidos fora do lote de teste, por inspeção no visualizador local, sem alterar nenhum rótulo |
