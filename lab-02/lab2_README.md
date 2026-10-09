@@ -16,6 +16,14 @@ a verificação da leitura guiada pelo CSV e a retirada do YOLO.
 Como a arquitetura mudou, os itens N0 a N4 da rubrica foram combinados com
 os itens V0 a V4 (originalmente dirigidos ao grupo VoltLens) e adaptados ao
 estado real do projeto. As respostas estão na seção 3.
+Os diagramas completos das duas arquiteturas revisadas, com os módulos
+numerados, estão em anexo:
+[B aperfeiçoada](anexos/lab2_arquitetura_B_multiclasse.jpg), construída
+primeiro, e [A melhorada](anexos/lab2_arquitetura_A_divisao_de_classes.jpg),
+para comparação. Os limiares marcados como "0.XX" foram fixados depois, na
+validação: o roteador de triagem (módulo B5) foi implementado como um escore
+único de rejeição com limiar 0,966, que leva as fotos aos mesmos destinos
+que as duas perguntas do diagrama (seções 2.10 e 4.8).
 
 ### 1.1 Resposta às críticas recebidas
 
