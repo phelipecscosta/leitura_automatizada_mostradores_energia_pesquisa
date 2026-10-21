@@ -56,12 +56,15 @@ oficial do SCAN para espinha congelada com só a cabeça linear treinada
   cosseno, buscados na foto original; peso da entropia 5,0; SGD com momento
   0,9, lr 5,0, sem decaimento; 100 épocas, lote de 512; 10 cabeças, e fica
   a de menor perda SCAN na última época (critério do artigo, sem rótulos).
+  - Entrada da cabeça: vetores normalizados para comprimento 1, a mesma
+  geometria dos vizinhos (cosseno) e do K-means.
 - Auto-rotulagem: limiar de confiança 0,99, sem balanceamento de classes;
   SGD com momento 0,9, lr 0,03; 25 épocas, lote de 512; média móvel
   exponencial dos pesos (0,999). Só a cabeça é treinada.
 - Sanidade, sem rótulos: se a perda divergir (NaN ou crescimento contínuo)
-  ou todas as fotos caírem num único cluster, o lr da fase é dividido por 10
-  até que isso não ocorra; o valor usado é reportado.
+  ou se, ao fim do agrupamento, menos da metade dos clusters estiver ocupada
+  (quase-colapso), o lr da fase é dividido por 10 até que isso não ocorra,
+  em até 4 tentativas; o valor usado é reportado.
 
 5 sementes por configuração. A sensibilidade a K (20 e 100) é exploratória
 e nunca escolhe a configuração.
@@ -140,3 +143,4 @@ declarado não estimável.
 | 20/10/2026 | Seções 1.4 e 1.7: estatística única da H2 (pureza balanceada), bootstrap estratificado por classe, padronização só da baseline e vetores normalizados no K-means | O texto original não fixava uma estatística única nem a geometria; fixado antes de qualquer cálculo de pureza ou de agrupamento |
 | 20/10/2026 | Seções 1.6 e 1.7: a H1 decide só pela AP de "outros"; a restrição de revocação passa a ser o critério de viabilidade, reportado à parte; bootstrap da H1 estratificado por classe | O texto não definia a H1 quando a linha de base não cumpre a restrição, como ocorreu com o K-means (K = 50) no desenvolvimento; fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: hiperparâmetros trocados pelos da configuração oficial do SCAN para espinha congelada (ImageNet-50), mais uma regra de sanidade sem rótulos para o lr | Os valores anteriores vinham da configuração do CIFAR-10, em que o SCAN atualiza a rede inteira; o código oficial tem uma configuração própria para o regime deste projeto (só a cabeça linear). Fixado antes de qualquer execução do SCAN |
+| 20/10/2026 | Seção 1.4: vetores normalizados antes da cabeça do SCAN; sanidade passa a detectar o quase-colapso (menos da metade dos clusters ocupados). **Revisão posterior a resultados com rótulos.** A H1 é decidida pela execução corrigida; a execução original é reportada | Diagnóstico sem rótulos da primeira execução: norma das características de cerca de 47, logits com desvio de 2.800 a 6.600, softmax saturado e 3 a 6 de 50 clusters ocupados já ao fim do agrupamento. O lr oficial (5,0) foi ajustado para outra escala de características. A correção usa a geometria já fixada para os vizinhos e o K-means; o critério não usa rótulos |
