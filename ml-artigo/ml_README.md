@@ -84,20 +84,20 @@ comprimento 1, em que a distância euclidiana ordena os vizinhos como o cosseno.
   "medidor" (o lado seguro, E09). Feito em todas as sementes.
 - Humano, para medir o custo (H3): na execução do SCAN de menor perda de
   avaliação (critério do artigo, sem rótulos). O inspetor vê, sem rótulos,
-  as 12 fotos de maior P(cluster | foto) entre as atribuídas a cada cluster,
+  as 24 fotos de maior P(cluster | foto) entre as atribuídas a cada cluster,
   só dos lotes de desenvolvimento, e marca, pelo critério de medidor do
-  esquema de rótulos (E19): "medidor", se todas as 12 forem de medidor;
+  esquema de rótulos (E19): "medidor", se todas as 24 forem de medidor;
   "misto", se pelo menos uma for de medidor e as demais incluírem "outros"
   ou fotos que não permitem decidir; "outros", se nenhuma for de medidor e
   todas forem claramente "outros"; "incerto", se nenhuma for claramente de
   medidor e alguma não permitir decidir. "Misto" conta como "medidor" (lado
   seguro, E09) e é reportado à parte. Só os incertos recebem uma segunda
-  rodada, com as 12 fotos seguintes (posições 13 a 24) e decisão binária:
-  "outros" só se nenhuma das 24 fotos for de medidor e a dúvida tiver sido
+  rodada, com as 24 fotos seguintes (posições 25 a 48) e decisão binária:
+  "outros" só se nenhuma das 48 fotos for de medidor e a dúvida tiver sido
   resolvida; senão, "medidor". A expansão depende só da marca do inspetor,
   nunca de métricas com rótulos. Registram-se o tempo por tela e o número de
   clusters e de fotos inspecionados; as decisões ficam na pasta de trabalho.
-  Limitações: as marcas descrevem as 12 fotos típicas, e não o cluster
+  Limitações: as marcas descrevem as 24 fotos típicas, e não o cluster
   inteiro; o inspetor também rotulou a amostra e pode reconhecer fotos.
 
 ### 1.6 Métricas
@@ -156,4 +156,4 @@ declarado não estimável.
 | 20/10/2026 | Seções 1.6 e 1.7: a H1 decide só pela AP de "outros"; a restrição de revocação passa a ser o critério de viabilidade, reportado à parte; bootstrap da H1 estratificado por classe | O texto não definia a H1 quando a linha de base não cumpre a restrição, como ocorreu com o K-means (K = 50) no desenvolvimento; fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: hiperparâmetros trocados pelos da configuração oficial do SCAN para espinha congelada (ImageNet-50), mais uma regra de sanidade sem rótulos para o lr | Os valores anteriores vinham da configuração do CIFAR-10, em que o SCAN atualiza a rede inteira; o código oficial tem uma configuração própria para o regime deste projeto (só a cabeça linear). Fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: vetores normalizados antes da cabeça do SCAN; sanidade passa a detectar o quase-colapso (menos da metade dos clusters ocupados). **Revisão posterior a resultados com rótulos.** A H1 é decidida pela execução corrigida; a execução original é reportada | Diagnóstico sem rótulos da primeira execução: norma das características de cerca de 47, logits com desvio de 2.800 a 6.600, softmax saturado e 3 a 6 de 50 clusters ocupados já ao fim do agrupamento. O lr oficial (5,0) foi ajustado para outra escala de características. A correção usa a geometria já fixada para os vizinhos e o K-means; o critério não usa rótulos |
-| 21/10/2026 | Seção 1.5: regra de marcação dos clusters pela pureza das 12 fotos típicas (medidor, misto, outros, incerto); "misto" conta como medidor | O texto anterior não definia como decidir clusters com mistura; fixado antes de qualquer cluster ser inspecionado |
+| 21/10/2026 | Seção 1.5: 24 fotos por cluster (antes 12) e segunda rodada com as 24 seguintes; regra de marcação pela pureza das fotos vistas (medidor, misto, outros, incerto), com "misto" contando como medidor | Mais fotos por cluster para ver a mistura; o texto anterior não definia como decidir clusters mistos. Fixado antes de qualquer cluster ser inspecionado |
