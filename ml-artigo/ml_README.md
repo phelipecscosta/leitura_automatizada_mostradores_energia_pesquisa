@@ -19,8 +19,15 @@ de ML é comparada e reportada; a triagem do produto continua sendo a de DL.
 
 ### 1.2 Características
 
-- Proposta: DINOv2 ViT-S/14, congelado (pré-processamento fixado na T4.2,
-  antes de qualquer agrupamento).
+- Proposta: DINOv2 ViT-S/14, congelado, pesos oficiais carregados pelo
+  `timm` (`vit_small_patch14_dinov2.lvd142m`); característica = token de
+  classe (384 dimensões). Pré-processamento igual ao da triagem de DL
+  (spec 2.5.7): realce fixo, 224 px no lado menor, normalização do
+  ImageNet; cada lado é então cortado ao centro para o maior múltiplo de 14
+  (224 × 294 nas fotos de 360 × 480). Fixado a priori, sem comparar
+  resoluções pelos rótulos. Se a análise de erros mostrar que os medidores
+  mapeados como "outros" são sobretudo pequenos ou distantes, a resolução
+  quase nativa (350 × 476) entra só como análise exploratória.
 - Comparação de extratores (H2): o mesmo DINOv2, a MobileNetV3-Large a
   224 px (a espinha da triagem de DL, no lugar da ResNet-50 prevista) e a
   baseline manual do Lab02 (HOG, cor e qualidade).
@@ -103,4 +110,4 @@ declarado não estimável.
 ### 1.10 Revisões do protocolo
 
 | Data | Revisão | Motivo |
-| --- | --- | --- |
+| 20/10/2026 | Seção 1.2: carregamento pelo `timm` e pré-processamento fixados (224 px no lado menor, corte para múltiplo de 14) | Pendência prevista no próprio protocolo, resolvida antes de qualquer extração ou agrupamento |
