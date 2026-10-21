@@ -54,6 +54,13 @@ lr 1e-4 e decaimento 1e-4; 50 épocas, lote de 128; auto-rotulagem com limiar
 a aumentação (seção 1.3) e a espinha congelada. 5 sementes por configuração.
 A sensibilidade a K (20 e 100) é exploratória e nunca escolhe a configuração.
 
+Geometria, igual em todos os métodos: as características do DINOv2 e da
+MobileNetV3-Large são usadas como saem da rede; as da baseline manual são
+padronizadas (escore z, com média e desvio das fotos agrupadas, sem rótulos),
+porque só ela mistura grandezas de unidades diferentes. Os vizinhos usam a
+similaridade de cosseno; o K-means recebe os vetores normalizados para
+comprimento 1, em que a distância euclidiana ordena os vizinhos como o cosseno.
+
 ### 1.5 Mapeamento dos clusters
 
 - Por maioria, para avaliar: cada cluster recebe a classe da maioria das
@@ -85,9 +92,12 @@ A sensibilidade a K (20 e 100) é exploratória e nunca escolhe a configuração
   "outros". Vence se o IC 95% da diferença (bootstrap pareado, médias das
   sementes) excluir 0; senão, empate. As duas configurações precisam
   cumprir a restrição da seção 1.6.
-- H2 (confirmatória): pureza dos 5 vizinhos dentro da amostra rotulada,
-  calculada por classe; DINOv2 contra cada um dos outros dois extratores,
-  com a mesma regra.
+- H2 (confirmatória): pureza dos 5 vizinhos (cosseno) de cada foto da amostra
+  aleatória, buscados entre as próprias 225 fotos, sem a foto, no colapso
+  binário. Estatística: pureza balanceada, a média da pureza das fotos de
+  medidor e da pureza das fotos de "outros"; as duas são reportadas. DINOv2
+  contra cada um dos outros dois extratores: vence se o IC 95% da diferença
+  (bootstrap pareado, estratificado por classe, 2.000 reamostragens) excluir 0.
 - H3 (descritiva): o custo do mapeamento humano (seção 1.5) e a sua perda
   em relação ao mapeamento por maioria.
 - Exploratórias: K-means com K = 2, a sensibilidade a K, o mesmo pipeline
@@ -111,3 +121,4 @@ declarado não estimável.
 
 | Data | Revisão | Motivo |
 | 20/10/2026 | Seção 1.2: carregamento pelo `timm` e pré-processamento fixados (224 px no lado menor, corte para múltiplo de 14) | Pendência prevista no próprio protocolo, resolvida antes de qualquer extração ou agrupamento |
+| 20/10/2026 | Seções 1.4 e 1.7: estatística única da H2 (pureza balanceada), bootstrap estratificado por classe, padronização só da baseline e vetores normalizados no K-means | O texto original não fixava uma estatística única nem a geometria; fixado antes de qualquer cálculo de pureza ou de agrupamento |
