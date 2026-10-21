@@ -82,11 +82,16 @@ comprimento 1, em que a distância euclidiana ordena os vizinhos como o cosseno.
   fotos rotuladas dele, contadas nos outros dois lotes (o lote medido nunca
   mapeia a si mesmo). Cluster sem foto rotulada nesses lotes ou empatado:
   "medidor" (o lado seguro, E09). Feito em todas as sementes.
-- Humano, para medir o custo (H3): na execução de menor perda SCAN
-  (critério do artigo, sem rótulos). O inspetor vê, sem rótulos, as fotos
-  de cada cluster mais próximas do protótipo, só dos lotes de
-  desenvolvimento; dúvida vai para "medidor". Registram-se o tempo, o
-  número de clusters e o de fotos inspecionadas.
+- Humano, para medir o custo (H3): na execução do SCAN de menor perda de
+  avaliação (critério do artigo, sem rótulos). O inspetor vê, sem rótulos,
+  as 12 fotos de maior P(cluster | foto) entre as atribuídas a cada cluster,
+  só dos lotes de desenvolvimento, e marca "medidor", "outros" ou "incerto".
+  Só os clusters incertos recebem uma segunda rodada, com as 12 fotos
+  seguintes (posições 13 a 24) e decisão binária; dúvida que persiste vai
+  para "medidor". A expansão depende só da marca do inspetor, nunca de
+  métricas com rótulos. Registram-se o tempo por cluster e o número de
+  clusters e de fotos inspecionados. As decisões ficam na pasta de trabalho.
+  Limitação: o inspetor também rotulou a amostra e pode reconhecer fotos.
 
 ### 1.6 Métricas
 
@@ -144,3 +149,4 @@ declarado não estimável.
 | 20/10/2026 | Seções 1.6 e 1.7: a H1 decide só pela AP de "outros"; a restrição de revocação passa a ser o critério de viabilidade, reportado à parte; bootstrap da H1 estratificado por classe | O texto não definia a H1 quando a linha de base não cumpre a restrição, como ocorreu com o K-means (K = 50) no desenvolvimento; fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: hiperparâmetros trocados pelos da configuração oficial do SCAN para espinha congelada (ImageNet-50), mais uma regra de sanidade sem rótulos para o lr | Os valores anteriores vinham da configuração do CIFAR-10, em que o SCAN atualiza a rede inteira; o código oficial tem uma configuração própria para o regime deste projeto (só a cabeça linear). Fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: vetores normalizados antes da cabeça do SCAN; sanidade passa a detectar o quase-colapso (menos da metade dos clusters ocupados). **Revisão posterior a resultados com rótulos.** A H1 é decidida pela execução corrigida; a execução original é reportada | Diagnóstico sem rótulos da primeira execução: norma das características de cerca de 47, logits com desvio de 2.800 a 6.600, softmax saturado e 3 a 6 de 50 clusters ocupados já ao fim do agrupamento. O lr oficial (5,0) foi ajustado para outra escala de características. A correção usa a geometria já fixada para os vizinhos e o K-means; o critério não usa rótulos |
+| 21/10/2026 | Seção 1.5: mapeamento humano com 12 fotos por cluster, marca "incerto" e segunda rodada só para os incertos; decisões na pasta de trabalho | Detalha o procedimento antes de qualquer cluster ser inspecionado; o gatilho da expansão não usa rótulos |
