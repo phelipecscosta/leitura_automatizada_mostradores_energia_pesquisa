@@ -79,9 +79,10 @@ comprimento 1, em que a distância euclidiana ordena os vizinhos como o cosseno.
   soma, sobre os clusters c, de p(c | foto) · π_c, em que π_c é a fração de
   "outros" entre as fotos rotuladas do cluster c nos outros dois lotes,
   suavizada para a prevalência (m = 1). No K-means, p(c | foto) vale 0 ou 1.
-- Restrição: revocação de medidor ≥ 0,97 pelo limite inferior unilateral
-  de 95% de Clopper-Pearson, no mapeamento rígido. Ela não é usada sozinha,
-  porque mapear tudo como "medidor" daria 100%.
+- Viabilidade da triagem: revocação de medidor ≥ 0,97 pelo limite inferior
+  unilateral de 95% de Clopper-Pearson, no mapeamento rígido, reportada para
+  cada configuração. Com 208 medidores, admite no máximo 2 perdidos. Ela não
+  é usada sozinha, porque mapear tudo como "medidor" daria 100%.
 - Descritivas: revocação de "outros", acurácia balanceada, F1 macro e matriz
   de confusão. Com 17 "outros", nenhuma delas decide nada.
 - Variação: média e desvio entre sementes; IC por bootstrap pareado.
@@ -89,9 +90,12 @@ comprimento 1, em que a distância euclidiana ordena os vizinhos como o cosseno.
 ### 1.7 Hipóteses e regra de decisão
 
 - H1 (confirmatória): SCAN > K-means com K = 50, no DINOv2, em AP de
-  "outros". Vence se o IC 95% da diferença (bootstrap pareado, médias das
-  sementes) excluir 0; senão, empate. As duas configurações precisam
-  cumprir a restrição da seção 1.6.
+  "outros" (qualidade da ordenação, independente do mapeamento rígido).
+  Estatística: média, entre as 5 sementes, da AP de cada configuração.
+  Vence se o IC 95% da diferença (bootstrap pareado e estratificado por
+  classe, 2.000 reamostragens; em cada uma, a AP de cada semente nas mesmas
+  fotos, depois a média) excluir 0; senão, empate. A viabilidade da seção
+  1.6 é reportada à parte e não entra na decisão da H1.
 - H2 (confirmatória): pureza dos 5 vizinhos (cosseno) de cada foto da amostra
   aleatória, buscados entre as próprias 225 fotos, sem a foto, no colapso
   binário. Estatística: pureza balanceada, a média da pureza das fotos de
@@ -122,3 +126,4 @@ declarado não estimável.
 | Data | Revisão | Motivo |
 | 20/10/2026 | Seção 1.2: carregamento pelo `timm` e pré-processamento fixados (224 px no lado menor, corte para múltiplo de 14) | Pendência prevista no próprio protocolo, resolvida antes de qualquer extração ou agrupamento |
 | 20/10/2026 | Seções 1.4 e 1.7: estatística única da H2 (pureza balanceada), bootstrap estratificado por classe, padronização só da baseline e vetores normalizados no K-means | O texto original não fixava uma estatística única nem a geometria; fixado antes de qualquer cálculo de pureza ou de agrupamento |
+| 20/10/2026 | Seções 1.6 e 1.7: a H1 decide só pela AP de "outros"; a restrição de revocação passa a ser o critério de viabilidade, reportado à parte; bootstrap da H1 estratificado por classe | O texto não definia a H1 quando a linha de base não cumpre a restrição, como ocorreu com o K-means (K = 50) no desenvolvimento; fixado antes de qualquer execução do SCAN |
