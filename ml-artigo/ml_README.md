@@ -148,6 +148,16 @@ No teste, só a revocação de medidor é estimável (cerca de 74 medidores,
 1 foto de "outros"), com IC de Clopper-Pearson. O lado "outros" do teste é
 declarado não estimável.
 
+
+Exploratória, declarada antes da abertura: a regra de decisão por foto
+(seção 10 do notebook), com o limiar congelado em 0,994 sobre o escore do
+mapeamento humano da mesma execução. No teste, mede-se só a perda (medidores
+rejeitados ÷ medidores), com IC de Clopper-Pearson; a cobertura de "outros"
+não é estimável. Para a triagem de DL, valem também as métricas da seção 2.10
+do protocolo do Lab02 (cobertura, risco e perda da rejeição, com o limiar
+0,966 sem ajuste). O código da abertura é ensaiado antes nos lotes de
+desenvolvimento.
+
 ### 1.10 Revisões do protocolo
 
 | Data | Revisão | Motivo |
@@ -157,3 +167,5 @@ declarado não estimável.
 | 20/10/2026 | Seção 1.4: hiperparâmetros trocados pelos da configuração oficial do SCAN para espinha congelada (ImageNet-50), mais uma regra de sanidade sem rótulos para o lr | Os valores anteriores vinham da configuração do CIFAR-10, em que o SCAN atualiza a rede inteira; o código oficial tem uma configuração própria para o regime deste projeto (só a cabeça linear). Fixado antes de qualquer execução do SCAN |
 | 20/10/2026 | Seção 1.4: vetores normalizados antes da cabeça do SCAN; sanidade passa a detectar o quase-colapso (menos da metade dos clusters ocupados). **Revisão posterior a resultados com rótulos.** A H1 é decidida pela execução corrigida; a execução original é reportada | Diagnóstico sem rótulos da primeira execução: norma das características de cerca de 47, logits com desvio de 2.800 a 6.600, softmax saturado e 3 a 6 de 50 clusters ocupados já ao fim do agrupamento. O lr oficial (5,0) foi ajustado para outra escala de características. A correção usa a geometria já fixada para os vizinhos e o K-means; o critério não usa rótulos |
 | 21/10/2026 | Seção 1.5: 24 fotos por cluster (antes 12) e segunda rodada com as 24 seguintes; regra de marcação pela pureza das fotos vistas (medidor, misto, outros, incerto), com "misto" contando como medidor | Mais fotos por cluster para ver a mistura; o texto anterior não definia como decidir clusters mistos. Fixado antes de qualquer cluster ser inspecionado |
+| 21/10/2026 | Análise exploratória acrescentada antes da abertura do teste: regra de decisão por foto (limiar no escore de "outros"), com a curva cobertura × perda da E30 nas 225 fotos | Nenhum mapeamento por cluster foi viável no desenvolvimento (seções 6 a 9 do notebook). Posterior a resultados com rótulos; não muda o que vai para o teste (seção 1.9) |
+| 21/10/2026 | Seção 1.9: a regra por foto entra no teste como exploratória, com o limiar congelado em 0,994; métricas da DL no teste explicitadas; ensaio prévio nos lotes de desenvolvimento | O teste é a única verificação independente do limiar escolhido no desenvolvimento. Fixado antes da abertura |
