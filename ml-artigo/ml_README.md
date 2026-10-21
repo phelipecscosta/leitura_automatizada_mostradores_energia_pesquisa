@@ -47,12 +47,24 @@ de ML é comparada e reportada; a triagem do produto continua sendo a de DL.
 
 ### 1.4 Hiperparâmetros
 
-Fixos a priori, sem nenhuma escolha por rótulos: K = 50 clusters;
-k = 20 vizinhos por similaridade de cosseno; peso da entropia 5,0; Adam com
-lr 1e-4 e decaimento 1e-4; 50 épocas, lote de 128; auto-rotulagem com limiar
-0,99 e balanceamento de classes. Valores do código oficial do SCAN, exceto
-a aumentação (seção 1.3) e a espinha congelada. 5 sementes por configuração.
-A sensibilidade a K (20 e 100) é exploratória e nunca escolhe a configuração.
+Fixos a priori, sem nenhuma escolha por rótulos. Valores da configuração
+oficial do SCAN para espinha congelada com só a cabeça linear treinada
+(`configs/scan/scan_imagenet_50.yml` e `configs/selflabel/selflabel_imagenet_50.yml`,
+`update_cluster_head_only: True`), exceto a aumentação (seção 1.3):
+
+- Agrupamento: K = 50 clusters; k = 50 vizinhos por similaridade de
+  cosseno, buscados na foto original; peso da entropia 5,0; SGD com momento
+  0,9, lr 5,0, sem decaimento; 100 épocas, lote de 512; 10 cabeças, e fica
+  a de menor perda SCAN na última época (critério do artigo, sem rótulos).
+- Auto-rotulagem: limiar de confiança 0,99, sem balanceamento de classes;
+  SGD com momento 0,9, lr 0,03; 25 épocas, lote de 512; média móvel
+  exponencial dos pesos (0,999). Só a cabeça é treinada.
+- Sanidade, sem rótulos: se a perda divergir (NaN ou crescimento contínuo)
+  ou todas as fotos caírem num único cluster, o lr da fase é dividido por 10
+  até que isso não ocorra; o valor usado é reportado.
+
+5 sementes por configuração. A sensibilidade a K (20 e 100) é exploratória
+e nunca escolhe a configuração.
 
 Geometria, igual em todos os métodos: as características do DINOv2 e da
 MobileNetV3-Large são usadas como saem da rede; as da baseline manual são
@@ -127,3 +139,4 @@ declarado não estimável.
 | 20/10/2026 | Seção 1.2: carregamento pelo `timm` e pré-processamento fixados (224 px no lado menor, corte para múltiplo de 14) | Pendência prevista no próprio protocolo, resolvida antes de qualquer extração ou agrupamento |
 | 20/10/2026 | Seções 1.4 e 1.7: estatística única da H2 (pureza balanceada), bootstrap estratificado por classe, padronização só da baseline e vetores normalizados no K-means | O texto original não fixava uma estatística única nem a geometria; fixado antes de qualquer cálculo de pureza ou de agrupamento |
 | 20/10/2026 | Seções 1.6 e 1.7: a H1 decide só pela AP de "outros"; a restrição de revocação passa a ser o critério de viabilidade, reportado à parte; bootstrap da H1 estratificado por classe | O texto não definia a H1 quando a linha de base não cumpre a restrição, como ocorreu com o K-means (K = 50) no desenvolvimento; fixado antes de qualquer execução do SCAN |
+| 20/10/2026 | Seção 1.4: hiperparâmetros trocados pelos da configuração oficial do SCAN para espinha congelada (ImageNet-50), mais uma regra de sanidade sem rótulos para o lr | Os valores anteriores vinham da configuração do CIFAR-10, em que o SCAN atualiza a rede inteira; o código oficial tem uma configuração própria para o regime deste projeto (só a cabeça linear). Fixado antes de qualquer execução do SCAN |
