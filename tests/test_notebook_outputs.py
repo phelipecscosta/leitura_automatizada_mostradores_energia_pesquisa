@@ -18,12 +18,12 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BITMAP_RE = re.compile(r"<image|<img|data:image", re.IGNORECASE)
 CLIENT_TEXT_RE = re.compile(r"\.jpe?g|\d{20}", re.IGNORECASE)
+LOCAL_PATH_RE = re.compile(r"\b[A-Za-z]:[\\/]")  # caminho local do Windows (E15)
 
 
 def _as_text(value) -> str:
     """Saídas do notebook guardam texto como string ou lista de strings."""
     return "".join(value) if isinstance(value, list) else str(value)
-
 
 def check_notebook(notebook: dict) -> list[str]:
     """Lista os problemas do notebook; lista vazia = notebook seguro."""
@@ -41,8 +41,11 @@ def check_notebook(notebook: dict) -> list[str]:
                     errors.append(f"Célula {number}: bitmap embutido ({mime}).")
                 elif CLIENT_TEXT_RE.search(text):
                     errors.append(f"Célula {number}: possível nome de arquivo do cliente.")
-            if CLIENT_TEXT_RE.search(_as_text(output.get("text", ""))):
+            text = _as_text(output.get("text", ""))
+            if CLIENT_TEXT_RE.search(text):
                 errors.append(f"Célula {number}: possível nome de arquivo do cliente.")
+            if any(LOCAL_PATH_RE.search(_as_text(v)) for v in [text, *data.values()]):
+                errors.append(f"Célula {number}: caminho local na saída.")
     return errors
 
 
@@ -64,6 +67,7 @@ def test_clean_notebook_passes():
     _cell(data={"text/html": "<img src='foto.png'>"}),                    # HTML
     _cell(name="stdout", text="lendo foto_001.JPG"),                     # nome real
     _cell(data={"text/plain": "12345678901234567890"}),                   # 20 dígitos
+    _cell(name="stderr", text="c:\\Projetos\\.venv\\Lib\\aviso.py:21: Warning"),  # caminho
     {"cells": [{"cell_type": "markdown", "attachments": {"a.png": {}}}]},  # anexo
 ])
 def test_unsafe_notebook_fails(notebook):
