@@ -32,6 +32,7 @@ revisão datada (seção 1.11); o horário do commit é a prova.
   avaliado por um modelo treinado nos outros dois; predições fora da dobra
   reunidas.
 - 3 sementes por candidato e dobra, combinadas pela média dos logits (E31).
+Revisado em 1.11 (R1): uma execução por dobra no C0 e no C1.
 - Divisão interna para as épocas (opção E-b), só nos candidatos com ajuste
   fino: em cada dobra, 10% das fotos pareadas dos lotes de treino,
   estratificados por grupo, com semente fixa, escolhem a época pela perda
@@ -51,6 +52,9 @@ C0, C2, C4, C1, C3.
 | C2 | MobileNetV3-Large (ImageNet V2), rede inteira, resolução nativa (480 × 360) | AdamW, lr 3 × 10⁻⁴, decaimento de pesos 0,05, até 15 épocas, cosseno com 1 época de aquecimento, lote 32 |
 | C3 | DINOv2 ViT-S/14, rede inteira, 224 px no lado menor com corte em múltiplo de 14 (E37) | AdamW, lr 2 × 10⁻⁵ na espinha e 1 × 10⁻³ na cabeça, decaimento 0,05, até 10 épocas, cosseno, lote 32 |
 | C4 | Igual à C2 (aluno) | Perda = 0,5 · entropia cruzada + 0,5 · T² · KL(professor ‖ aluno), T = 4; professor = C3 da mesma dobra e semente |
+
+Revisado em 1.11 (R2): as vistas do C0 e do C1 vêm de um cache novo, sem
+recorte; o cache da ET4a não é usado pela triagem.
 
 Regras comuns:
 
@@ -110,6 +114,8 @@ Regras comuns:
   primeiro candidato cujo limite inferior do IC 95% da diferença (cobertura
   dele − cobertura do melhor) seja maior que −0,05. IC por bootstrap pareado
   sobre as fotos (2.000 reamostragens, semente 0), com os limiares fixos.
+- Revisado em 1.11 (R3): a regra de escolha é aplicada depois da revisão das
+  discordâncias, com os rótulos corrigidos.
 
 ### 1.8 Relatórios obrigatórios
 
@@ -145,4 +151,46 @@ Regras comuns:
 
 ### 1.11 Revisões
 
-Nenhuma até o momento.
+Revisões de 05/11/2026, feitas antes de qualquer treino dos candidatos.
+
+**R1 — Sementes nas sondas lineares (seção 1.2).** O C0 e o C1 têm uma
+execução por dobra. A regressão logística com lbfgs é determinística (o
+scikit-learn ignora `random_state` nesse solver), e as vistas são fixas por
+pseudônimo; três sementes produziriam modelos idênticos. As 3 sementes valem
+para o C2, o C3 e o C4. Evidência no notebook: coeficientes idênticos com
+dois valores de `random_state`.
+
+**R2 — Aumentação única, sem recorte (seção 1.3).** As vistas do cache da
+ET4a têm recorte aleatório de 80% a 100% da área, que poderia cortar o
+segundo medidor dos múltiplos, o mesmo motivo que exclui o recorte do C2 ao
+C4 (E57). Passa a existir uma única função de aumentação da triagem, no
+pacote `training`: rotação de ±10°, brilho e contraste de ±0,2 e translação
+de até ±5%, com os cantos preenchidos pela cor média da foto, aplicada depois
+do realce. Ela gera as 5 vistas aumentadas do C0 e do C1 (semente por
+pseudônimo e vista), num cache novo com nome próprio, e faz a aumentação
+durante o treino do C2, do C3 e do C4. O cache da ET4a fica intacto, para o
+artigo de ML.
+
+**R3 — Revisão das discordâncias e correção dos rótulos (seção 1.7; E54).**
+
+- Momento: depois de treinar o C0, o C1, o C2 e o C3, e antes da regra Δ2.
+- Fotos revisadas: a união das 50 maiores discordâncias de cada um desses
+  candidatos, só entre as pareadas do desenvolvimento, ordenadas pela menor
+  probabilidade calibrada (temperatura aninhada) da classe do produto do
+  rótulo.
+- Revisão às cegas: o autor escolhe o grupo e a condição vendo só a foto,
+  sem o rótulo atual nem a predição; só quando a escolha difere do rótulo
+  atual os dois aparecem para a decisão final. Ferramenta em `local/`.
+- As correções geram uma nova versão do arquivo de rótulos, com novo SHA-256;
+  a versão original é preservada.
+- As métricas de todos os candidatos são recalculadas com os rótulos
+  corrigidos, a partir dos logits fora da dobra gravados; a temperatura, o
+  limiar e a regra Δ2 usam os rótulos corrigidos. Os modelos das dobras não
+  são retreinados. O modelo final e o C4, se for necessário, treinam com os
+  rótulos corrigidos.
+- Gatilho de retreino: se as correções passarem de 1% das fotos de
+  desenvolvimento, ou de 10% de alguma classe de rejeição (indeterminado,
+  múltiplos ou outros), todos os candidatos são retreinados com os rótulos
+  corrigidos.
+- Os rótulos do teste (03/07) nunca são corrigidos a partir de predições de
+  modelo.
