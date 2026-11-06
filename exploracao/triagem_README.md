@@ -194,3 +194,25 @@ artigo de ML.
   corrigidos.
 - Os rótulos do teste (03/07) nunca são corrigidos a partir de predições de
   modelo.
+
+Revisões de 06/11/2026, feitas depois da regra Δ2 e antes da abertura do teste.
+
+**R4 — Papéis na abertura do teste (seção 1.9).** A regra Δ2 escolheu o C3; o
+C4 falhou por 0,26 ponto (limite inferior de −5,26 contra −5,00). O produto
+adota o C4 por decisão de produto, fora da regra: custo de inferência cerca de
+5 vezes menor, e diferença de qualidade dentro do ruído de treino medido (o C3
+retreinado como professor deu 64,0% de cobertura, contra 67,8% na execução
+avaliada e 65,3% do C4). A abertura avalia os dois, com os papéis fixados aqui:
+C4, o modelo do produto, com a meta verificada; C3, o vencedor da regra do
+estudo, relatado à parte. Nenhum dos dois é escolhido pelo resultado do teste.
+Ressalva registrada: no desenvolvimento, o C3 aponta mais múltiplos (39 de 72,
+contra 27 de 72 no C4).
+
+**R5 — Modelo final (seções 1.2 e 1.6).** Cada modelo final é treinado com as
+fotos dos 3 lotes (pareadas e órfãs), com 3 sementes combinadas pela média dos
+logits, e o cronograma completo do candidato (cosseno de 15 épocas no C4 e de
+10 no C3), parando na mediana das épocas escolhidas na execução R3 do
+candidato, sem divisão interna. Os professores do C4 final são os C3 finais da
+mesma semente. A temperatura e o limiar são os da execução R3 (temperatura
+ajustada nos 3 lotes e limiar da meta sobre as predições calibradas fora da
+dobra), congelados antes da abertura.
