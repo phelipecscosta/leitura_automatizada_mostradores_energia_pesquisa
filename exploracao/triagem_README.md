@@ -217,3 +217,39 @@ candidato, sem divisão interna. Os professores do C4 final são os C3 finais da
 mesma semente. A temperatura e o limiar são os da execução R3 (temperatura
 ajustada nos 3 lotes e limiar da meta sobre as predições calibradas fora da
 dobra), congelados antes da abertura.
+
+**R6 — Artefato entregue, latência e ordem da abertura (seções 1.6 e 1.9).**
+Revisão de 06/11/2026, feita antes do treino dos modelos finais.
+
+- Motor: o artefato da triagem do produto é um módulo PyTorch com as 3 redes
+  do C4 final, a temperatura e o limiar (E32). O motor definitivo continua
+  sendo decidido na ET9 (E34). O ONNX é exportado e medido como evidência:
+  paridade dos logits e decisões idênticas nas fotos pareadas do
+  desenvolvimento. Comparar as decisões dos dois motores nas fotos do teste
+  não lê rótulos e não conta como abertura.
+- Saída: o artefato devolve as 12 saídas de grupo, com a média dos logits das
+  3 sementes e a temperatura já aplicadas. A soma por classe usa o mapeamento
+  grupo → classe, que passa para o pacote do produto; o pacote `training`
+  passa a importá-lo de lá. O escore de rejeição e o destino seguem a seção
+  1.6.
+- Modelo final: épocas de parada iguais à mediana das 9 épocas escolhidas
+  (3 lotes × 3 sementes) na execução R3 de cada candidato, lidas dos
+  metadados gravados (`c3_wb_fino_r3` e `c4_wb_fino_r3`). Pesos e metadados
+  (commit, SHA-256 dos rótulos e dos pesos, épocas, temperatura e limiar)
+  ficam na pasta de trabalho, em `modelos/`.
+- Gatilho de latência: medida antes da abertura, em CPU com 4 threads, lote
+  de 1, com pré-processamento, p50 e p95 em 200 fotos pareadas do
+  desenvolvimento, depois de 20 fotos de aquecimento, no PyTorch (motor do
+  produto) e no ONNX Runtime, para o C4 e para o C3 (3 redes cada). Se o p50
+  do C3 no PyTorch for menos de 2 vezes o do C4, a abertura é suspensa e a
+  E65 é revista, com nova revisão deste protocolo antes da abertura.
+- Ordem: (1) treino dos modelos finais; (2) artefato e paridade ONNX;
+  (3) latência e gatilho; (4) ensaio do código da abertura sobre os logits
+  fora da dobra da execução R3, que precisa reproduzir os números da E64;
+  (5) `triage.py` do produto, conferido contra a predição do treino nas fotos
+  de desenvolvimento; (6) abertura única do teste a partir das fotos em
+  disco, com o C4 pelo `triage.py` do produto (meta verificada) e o C3 pelo
+  código de treino, com o mesmo pré-processamento (relatado), com os
+  relatórios da seção 1.8. Os logits do teste e o resultado são gravados uma
+  vez e nunca recalculados.
+- Local: blocos novos em `triagem_candidatos.ipynb`, a partir do bloco 16.
