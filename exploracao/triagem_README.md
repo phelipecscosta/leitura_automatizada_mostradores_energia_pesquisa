@@ -199,10 +199,11 @@ Revisões de 06/11/2026, feitas depois da regra Δ2 e antes da abertura do teste
 
 **R4 — Papéis na abertura do teste (seção 1.9).** A regra Δ2 escolheu o C3; o
 C4 falhou por 0,26 ponto (limite inferior de −5,26 contra −5,00). O produto
-adota o C4 por decisão de produto, fora da regra: custo de inferência cerca de
-5 vezes menor, e diferença de qualidade dentro do ruído de treino medido (o C3
-retreinado como professor deu 64,0% de cobertura, contra 67,8% na execução
-avaliada e 65,3% do C4). A abertura avalia os dois, com os papéis fixados aqui:
+adota o C4 por decisão de produto, fora da regra: custo de inferência estimado
+entre 2 e 5 vezes menor, a medir na ET4g, e diferença de qualidade dentro do
+ruído de treino medido (o C3 retreinado como professor deu 64,0% de cobertura,
+contra 67,8% na execução avaliada e 65,3% do C4). A abertura avalia os dois,
+com os papéis fixados aqui:
 C4, o modelo do produto, com a meta verificada; C3, o vencedor da regra do
 estudo, relatado à parte. Nenhum dos dois é escolhido pelo resultado do teste.
 Ressalva registrada: no desenvolvimento, o C3 aponta mais múltiplos (39 de 72,
