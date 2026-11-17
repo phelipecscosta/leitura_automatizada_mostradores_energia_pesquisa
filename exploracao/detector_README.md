@@ -209,6 +209,29 @@ R-CNN. Na mesma medição, o Faster R-CNN da MobileNetV3 mostrou só mapas de pa
 32 na resolução nativa; a FPN passa a receber também os de passo 8 e 16 (N8). A
 mudança usa só a geometria do gabarito do desenvolvimento, sem nenhum treino.
 
+
+Revisão de 17/11/2026, antes de qualquer treino.
+
+**R2 — Sementes, números do treino e precisão (seções 1.5, 1.7 e 1.9).**
+
+- Sementes (T1 a): cada semente é avaliada separadamente. A métrica de escolha
+  é a média das AP ponderadas das 3 sementes; o bootstrap pareado sorteia as
+  fotos uma vez por reamostragem e recalcula a média das 3, de modo que o IC
+  inclui o ruído entre sementes. O limiar da segunda porta é o menor dos 3
+  limiares escolhidos, um por semente (lado seguro). O produto usa um modelo
+  só: o final da semente 0, treinado com os 3 lotes. Juntar as caixas das
+  sementes exigiria fusão de caixas e triplicaria a latência.
+- Números do treino (T2): as receitas de referência do `torchvision` na regra
+  linear para o lote de 8. S1: taxa de aprendizado de 0,00625 (referência de
+  0,15 com lote de 192) e decaimento dos pesos de 4 × 10⁻⁵, com todas as
+  camadas da espinha treináveis. F1 e F2: 0,01 (referência de 0,02 com lote de
+  16) e 10⁻⁴, com as 3 últimas camadas da espinha treináveis. Aquecimento de 1
+  época. A referência do SSDlite treina 600 épocas, contra as 40 daqui: a
+  escolha da época protege contra o sobreajuste, mas não contra o subtreino.
+- Precisão (T3 a): treino em precisão mista na GPU, como na triagem (E62);
+  predição da divisão interna e fora da dobra em precisão completa, sem TF32
+  (E33).
+
 ### 1.13 Limitações declaradas
 
 - Um único anotador das caixas, sem medida de concordância, e anotação não cega
@@ -219,3 +242,4 @@ mudança usa só a geometria do gabarito do desenvolvimento, sem nenhum treino.
 - O teste só tem 77 fotos sem campo: a cobertura da segunda porta sai com
   intervalo largo.
 - A latência foi medida na máquina de desenvolvimento, e não no piso da E04.
+
