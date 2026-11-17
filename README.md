@@ -5,7 +5,8 @@ medidores de energia de uma concessionária de energia do Nordeste.
 
 O software em si está no repositório do produto:
 [leitura_automatizada_mostradores_energia](https://github.com/phelipecscosta/leitura_automatizada_mostradores_energia).
-Este repositório contém somente as entregas exigidas pelas disciplinas e os
+Este repositório contém as entregas exigidas pelas disciplinas,
+os estudos de exploração que decidem componentes do produto e os
 arquivos criados para elas. Ele usa o código do produto instalado como pacote,
 sem copiá-lo.
 
@@ -15,6 +16,7 @@ sem copiá-lo.
 | --- | --- |
 | `lab-02/` | Entrega do Marco 1 (Lab02) da disciplina de Deep Learning |
 | `ml-artigo/` | Artigo da disciplina de Machine Learning |
+| `exploracao/` | Estudos que decidem componentes do produto: triagem de cinco classes e detector |
 | `tests/` | Testes de proteção dos dados do cliente |
 
 As pastas que ainda não têm conteúdo contêm apenas um arquivo `.gitkeep`.
