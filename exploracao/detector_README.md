@@ -232,6 +232,35 @@ Revisão de 17/11/2026, antes de qualquer treino.
   predição da divisão interna e fora da dobra em precisão completa, sem TF32
   (E33).
 
+
+Revisão de 17/11/2026, **depois** dos resultados do desenvolvimento (declarada).
+
+**R3 — Contabilidade da segunda porta e corte de confiança (seções 1.3 e 1.7).**
+
+- Resultado que a motivou: no F1, o limiar escolhido foi 0 nas 3 sementes, com
+  perda e cobertura nulas. Em 1,0% a 1,7% das fotos com campo, o F1 não entregou
+  nenhuma caixa (103, 79 e 125 fotos por semente; 30 nas três, com mediana de
+  16 px no menor lado do maior campo). Essas fotos "passavam" pela porta e não
+  contavam como perdidas, mas sem caixa o leitor não tem recorte para ler.
+- R3 a: a foto com campo sem nenhuma caixa entregue conta sempre como perdida;
+  o menor limiar é o menor número positivo. É uma correção da definição da
+  seção 1.7, que não descrevia o que acontece no pipeline.
+- R3 b: o mesmo corte de confiança da inferência, 0,001, em todos os
+  candidatos. O S1 já usava 0,001 (padrão do SSDlite); o F1 e o F2 usavam 0,05
+  (padrão do Faster R-CNN do `torchvision`), que descarta as caixas de
+  confiança baixa antes da porta e do leitor. A diferença era de configuração,
+  e não do que os modelos aprenderam.
+- Consequência: o F1 é retreinado (9 execuções, mesmas sementes e
+  configuração), porque só as predições tinham sido gravadas. O treino passa a
+  gravar os pesos de cada execução. As partes antigas do F1 ficam guardadas na
+  pasta de trabalho, como registro.
+- O S1 não muda: o corte dele já era 0,001. O F2 não é retreinado: está a 2,4
+  pontos de AP do F1 (IC inferior de +2,0), contra os 10 da regra G2, e o corte
+  afeta sobretudo a porta, e não a AP. Se o F1 continuar não viável depois da
+  R3, o F2 também é retreinado (B+).
+- O teste 03/07 continua lacrado. A regra da seção 1.9 é reaplicada sem
+  nenhuma outra mudança.
+
 ### 1.13 Limitações declaradas
 
 - Um único anotador das caixas, sem medida de concordância, e anotação não cega
