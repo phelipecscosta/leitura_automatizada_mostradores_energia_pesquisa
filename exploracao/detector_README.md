@@ -434,3 +434,36 @@ desenvolvimento com display de consumo ciclométrico anotado, ponderadas.
   subtreino da seção 1.13, sem teste. Todas essas fotos seguem para "Verificar"
   ou "Baixa qualidade": o custo é de cobertura, e não de risco.
 - O teste 03/07 continua lacrado.
+
+
+## 3. Leitura única do teste 03/07 (seção 1.10 e revisão R4)
+
+Modelo final S1_coco (artefato `d0d0ff83…e28e`), pelo detector do produto, em CPU,
+foto a foto, 18/11/2026. Primeira e única leitura do 03/07 pelo detector; o
+resultado não é recalculado.
+
+| Medida | Resultado |
+| --- | --- |
+| Fotos | 1.800 (1.723 com campo; 77 sem campo); orçamento de 3 perdas |
+| Perda da porta | 0,000% (lim. sup. 0,174%; 0 fotos): meta de 0,5% cumprida |
+| Cobertura da porta | 0,0% (0 de 77 fotos sem campo rejeitadas) |
+| AP ponderada | digital 91,5; ciclométrico 81,6; kvarh 74,3; número de série 87,1; escolha 86,75 |
+| Cobertura do campo (p5; mediana) | digital 0,70, 0,92; ciclométrico 0,67, 0,91; kvarh 0,77, 0,92; número de série 0,69, 0,89 |
+| Validador 2 | tipo divergente 3,21%; duas famílias 35,7%; sem família 0,11% |
+| kvarh com caixa de consumo por cima | 50,0% |
+| Regra do kvarh (290 fotos) | acerto 77,91%; kvarh escolhido como consumo 0,35%; ambíguos 5,8%; restante 16,0% |
+| Ambíguos entre as fotos que passam | mesma classe sem número de série 0,57% (10); mais de dois displays 0,23% (4); sem display de consumo 0,19% (4) |
+| Latência em CPU (4 threads) | p50 28,5 ms; p95 34,1 ms |
+
+- A meta da segunda porta está verificada no teste. A detecção generaliza
+  (escolha de 86,75, contra 85,74 no desenvolvimento, semente 0).
+- A porta não rejeitou nenhuma foto sem campo: com o limiar de 0,0122, quase toda
+  foto tem alguma caixa acima dele, e a porta só barra as fotos sem nenhuma caixa.
+  Nenhuma informação se perde (as fotos sem campo chegam a "Baixa qualidade" pelo
+  leitor), mas a porta quase não age. Uma porta pelo corte dos campos é uma regra
+  nova, a decidir com o desenvolvimento, na ET7.
+- A AP do kvarh vem de 30 caixas (intervalo largo, seção 1.13); o erro da regra de
+  posição ficou em 0,35%.
+- O acerto da regra do kvarh coincide com o do desenvolvimento (77,91%); a
+  população, os erros e os ambíguos são diferentes, o que confirma que são cálculos
+  distintos.
