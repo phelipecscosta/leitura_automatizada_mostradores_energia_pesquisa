@@ -272,3 +272,51 @@ Revisão de 17/11/2026, **depois** dos resultados do desenvolvimento (declarada)
   intervalo largo.
 - A latência foi medida na máquina de desenvolvimento, e não no piso da E04.
 
+
+## 2. Resultados no desenvolvimento
+
+Predições fora da dobra, 3 dobras × 3 sementes, com as revisões R1 a R3
+(17/11/2026). Métrica de escolha: média das AP ponderadas de display_digital,
+display_ciclometrico e numero_serie, em pontos de 0 a 100.
+
+| Candidato | Corte de confiança | AP digital | AP ciclométrico | AP kvarh | AP número de série | Escolha (média das sementes) | Limiares da porta por semente | Viável |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S1 | 0,001 | 89,1 | 81,8 | 83,9 | 80,6 | 83,8 | 0,022 / 0,040 / 0,017 | Sim |
+| F1 (R3) | 0,001 | 93,3 | 91,5 | 93,4 | 89,9 | 91,6 | 0,0025 / nenhum / 0,0017 | Não |
+| F2 | 0,05 | 94,2 | 92,4 | 94,6 | 92,8 | 93,1 | nenhum / nenhum / nenhum | Não |
+
+Antes da R3, o F1 (corte de 0,05) tinha escolha de 90,6, limiar 0 nas três
+sementes, e em 1,0% a 1,7% das fotos com campo não entregava nenhuma caixa.
+
+### 2.1 Aplicação da regra (seção 1.9)
+
+- Perfil CPU: **S1**, o único candidato viável, com limiar da porta de 0,0167
+  (o menor dos três, revisão R2).
+- Perfil GPU: nenhum. O F2 não é viável com o corte de 0,05 e não foi
+  retreinado (revisão R3): mesmo viável, ele teria de superar o S1 em 10 pontos
+  pelo limite do IC, e a diferença média é de 9,3.
+- Custo da escolha: 7,8 pontos de AP abaixo do F1, cuja entrega de caixas foi
+  instável entre sementes (uma das três reprovada pela meta).
+
+### 2.2 S1 no limiar 0,0167, por semente
+
+| Semente | Perda da porta (lim. sup.) | Cobertura da porta | kvarh com caixa de consumo por cima | Tipo divergente | Duas famílias | Só número de série |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0 | 0,18% (0,40%) | 2,6% | 59,5% | 3,6% | 44,9% | 0,6% |
+| 1 | 0,04% (0,20%) | 2,4% | 51,9% | 3,7% | 46,8% | 0,2% |
+| 2 | 0,25% (0,49%) | 6,8% | 63,8% | 3,5% | 34,9% | 0,7% |
+
+Cobertura do campo (semente 0), p5 e mediana: digital 0,67 e 0,91;
+ciclométrico 0,64 e 0,90; kvarh 0,69 e 0,91; número de série 0,65 e 0,89.
+
+### 2.3 Leitura
+
+- A porta quase não rejeita (2% a 7% das fotos sem campo). Nenhuma informação
+  se perde: a foto sem campo que passa vai para o leitor, que falha, e ela
+  chega à mesma pasta "Baixa qualidade", com o motivo "Falha na extração".
+- A confusão kvarh → consumo conta qualquer caixa de consumo acima de um limiar
+  muito baixo. A medida com uma classe por região, e a regra das duas leituras,
+  ficam para a ET6.
+- A cobertura do campo (p5 de 0,64 a 0,69) dimensiona a margem do recorte na
+  ET6.
+- O teste 03/07 continua lacrado: a leitura única é da etapa seguinte.
