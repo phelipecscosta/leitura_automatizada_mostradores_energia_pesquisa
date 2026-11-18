@@ -406,3 +406,31 @@ mesma inicialização fora do prefixo carregado), 18/11/2026.
   26 e 40; uma execução escolheu a última época do cronograma (risco de subtreino,
   seção 1.13). O modelo final do S1 com ImageNet (parada 18) fica só como registro.
 - O teste 03/07 continua lacrado.
+
+
+### 2.5 Seleção dos campos e regra do kvarh (revisão R4)
+
+S1_coco, predições fora da dobra, 18/11/2026. População do acerto: 710 fotos do
+desenvolvimento com display de consumo ciclométrico anotado, ponderadas.
+
+- Corte K2 escolhido por semente: 0,19, 0,30 e 0,27; vale o da semente 0, **0,19**.
+  A curva é plana entre 0,15 e 0,30 (acerto de 77% a 78%).
+- No corte de 0,19, por semente: acerto de 77,9%, 76,9% e 76,7%; kvarh escolhido
+  como consumo em 0,21%, 0,49% e 0,28%; ambíguos de 5,0%, 5,9% e 6,4%.
+- Ambíguos entre as fotos que passam pela porta (cerca de 3.000), no corte de
+  0,19: de 0,9% a 1,1% (41 a 48 fotos), sobretudo duas regiões da mesma classe
+  sem número de série (0,56% a 0,72%). Eles recebem o motivo novo "Mostrador de
+  leitura de consumo não identificado", na posição 8 da lista da spec, logo
+  depois de "Tipo divergente entre triagem e detector".
+- Diagnóstico do restante (semente 0, 16,8%; exploratório, sem mudança na regra):
+  - consumo detectado abaixo do corte, 6,4%;
+  - região escolhida fora do consumo e do kvarh, 3,7%;
+  - família digital, 3,3%;
+  - consumo não detectado, 2,8%;
+  - região deslocada (IoU de 0,3 a 0,5), 0,7%.
+
+  Sanidade: 95,3% das fotos têm o consumo coberto por alguma caixa prevista. O
+  limite é a confiança das caixas, e não o enquadramento. É compatível com o
+  subtreino da seção 1.13, sem teste. Todas essas fotos seguem para "Verificar"
+  ou "Baixa qualidade": o custo é de cobertura, e não de risco.
+- O teste 03/07 continua lacrado.
