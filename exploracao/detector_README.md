@@ -261,6 +261,69 @@ Revisão de 17/11/2026, **depois** dos resultados do desenvolvimento (declarada)
 - O teste 03/07 continua lacrado. A regra da seção 1.9 é reaplicada sem
   nenhuma outra mudança.
 
+
+Revisão de 18/11/2026, antes de qualquer treino da ET5c e antes da leitura do 03/07.
+
+**R4 — Ablação COCO, modelo final, regra do kvarh e leitura do teste (seções 1.4, 1.5 e 1.10).**
+
+- Ordem: a ablação COCO (seção 1.4) vem antes do modelo final. Se ela for
+  adotada, o limiar da porta é recalculado pela seção 1.7 e pela revisão R2,
+  com as predições fora da dobra dela, e o modelo final usa os pesos COCO.
+- Camadas carregadas (A-a): os pesos COCO do `torchvision`
+  (`SSDLite320_MobileNet_V3_Large_Weights.COCO_V1`) foram treinados com a cauda
+  reduzida da MobileNetV3 (80 canais no último estágio, contra 160 no S1), e o
+  S1 não a usa. Medição, sem treino (`training.detector_coco`): encaixam com o
+  mesmo nome e a mesma forma 37,6% dos valores da espinha, 57,6% dos extras,
+  19,8% da cabeça de classificação e 65,6% da cabeça de regressão. A ablação
+  carrega só o prefixo contíguo da espinha, na ordem da rede, até a primeira
+  camada de forma diferente (`backbone.features.1.0.3.0.weight`): 252 tensores,
+  37,6% dos valores. O restante da espinha fica com o ImageNet; os extras e as
+  cabeças começam como no S1. Ficam de fora:
+  - as camadas de mesma forma depois da divergência (menos de 0,05 ponto dos
+    valores), porque recebem entradas que não vêm do COCO;
+  - os extras, porque o primeiro diverge e os seguintes foram treinados com a
+    saída dele;
+  - a cabeça de classificação (91 classes);
+  - a cabeça de regressão, que tem a mesma forma, mas ajusta outras âncoras.
+- Descartadas: carregar tudo o que tem mesma forma (encaixa sem servir); não
+  fazer a ablação (descumpriria a seção 1.4); trocar o S1 para a cauda reduzida
+  (outro candidato, depois do resultado).
+- Modelo final (seção 1.5 e R2): a época de parada é a mediana das épocas
+  escolhidas nas 9 execuções do candidato adotado (3 lotes × 3 sementes), como
+  na R5 da triagem. A semente 0 da R2 é a do treino final, e não a fonte da
+  mediana.
+- Regra do kvarh (spec v17, 10.1; E83), medida nas caixas previstas:
+  - Junção (M1): entre as caixas de display (digital, ciclométrico e kvarh), a
+    de maior confiança absorve as que a cobrem com IoU ≥ 0,5, e a região fica
+    com a classe dela. As caixas de número de série não entram na junção.
+  - Corte (K2): a confiança mínima para uma região ou um número de série contar
+    na regra. É escolhido nas predições fora da dobra do desenvolvimento, por
+    semente, e vale o corte da semente 0. Critério: o maior acerto ponderado nas
+    fotos com display de consumo ciclométrico anotado, em que acerto é a região
+    escolhida como consumo ter IoU ≥ 0,5 com o display de consumo anotado. Em
+    empate, vence o corte maior. Relatados à parte: os erros (região de kvarh
+    escolhida como consumo) e os ambíguos (seguem para "Verificar"). Este corte
+    não é o do leitor, que continua na ET6 (D3 c β).
+  - Posição: o número de série usado é o mais confiante acima do corte. Com dois
+    displays da família ciclométrica, o mais próximo dele, de centro a centro,
+    é o kvarh e é descartado. Sem número de série, vale a classe das regiões.
+  - Ambíguos (G1, provisório até a ET6), todos para "Verificar" com um motivo
+    novo:
+    - duas regiões da mesma classe sem número de série;
+    - mais de duas regiões da família ciclométrica;
+    - nenhuma região de consumo, por exemplo uma só região classificada como kvarh.
+
+    O nome e a posição do motivo são decididos na T5c.3, depois de medida a
+    frequência no desenvolvimento.
+  - Digital: sem regra de posição. A região digital mais confiante segue para o
+    leitor; dois displays digitais ficam com a rede de segurança da E52.
+- Leitura do 03/07 (seção 1.10), acrescida de: acerto, erros e ambíguos da regra
+  do kvarh no corte fixado, e a frequência de cada caso ambíguo.
+- Limitação declarada: o limiar da porta e o corte da regra vêm de modelos
+  treinados com 2 lotes e com divisão interna, e são aplicados ao modelo final,
+  treinado com 3 lotes. Só a leitura do 03/07 verifica essa transferência
+  (mesma situação da E25 e da E66).
+
 ### 1.13 Limitações declaradas
 
 - Um único anotador das caixas, sem medida de concordância, e anotação não cega
