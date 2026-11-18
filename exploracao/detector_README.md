@@ -383,3 +383,26 @@ ciclométrico 0,64 e 0,90; kvarh 0,69 e 0,91; número de série 0,65 e 0,89.
 - A cobertura do campo (p5 de 0,64 a 0,69) dimensiona a margem do recorte na
   ET6.
 - O teste 03/07 continua lacrado: a leitura única é da etapa seguinte.
+
+
+### 2.4 Ablação COCO (seção 1.4, revisão R4)
+
+Predições fora da dobra, 3 dobras × 3 sementes, desenho pareado (mesma semente e
+mesma inicialização fora do prefixo carregado), 18/11/2026.
+
+| Variante | AP digital | AP ciclométrico | AP kvarh | AP número de série | Escolha (média; por semente) | Limiares da porta por semente | Viável |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S1 (ImageNet) | 89,1 | 81,8 | 83,9 | 80,6 | 83,8 (82,8 / 84,3 / 84,3) | 0,022 / 0,040 / 0,017 | Sim |
+| S1_coco (prefixo COCO) | 89,9 | 84,3 | 86,6 | 84,0 | 86,0 (85,7 / 86,4 / 86,0) | 0,029 / 0,019 / 0,012 | Sim |
+
+- Diferença S1_coco − S1: +2,21 pontos, IC 95% [+1,72; +2,71]. A ablação é
+  adotada pela regra da seção 1.4.
+- Limiar da porta recalculado (R2): 0,0122. Perda por semente de 0,00% (lim.
+  sup. 0,13%), 0,00% (0,13%) e 0,22% (0,45%); cobertura de 0,5%, 2,5% e 1,5%,
+  menor que a do S1 (2,4% a 6,8%). A cobertura não decide entre variantes
+  (seção 1.7), e a foto sem campo que passa chega a "Baixa qualidade" pelo leitor
+  (seção 2.3).
+- Modelo final (R4): parada na época 20, a mediana de 10, 17, 18, 19, 20, 20, 21,
+  26 e 40; uma execução escolheu a última época do cronograma (risco de subtreino,
+  seção 1.13). O modelo final do S1 com ImageNet (parada 18) fica só como registro.
+- O teste 03/07 continua lacrado.
