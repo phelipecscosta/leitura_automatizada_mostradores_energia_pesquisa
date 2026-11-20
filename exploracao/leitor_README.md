@@ -216,7 +216,7 @@ Um único modelo para as três classes (S0, E53).
 
 ### 1.14 Revisões
 
-Nenhuma até aqui.
+R1 (20/11/2026, antes do primeiro treino). A amostragem por classes iguais (B-b, seção 1.12) vale para os itens com alvo de texto. Os itens que treinam só a cabeça “duas leituras” (marca do professor, seção 1.3) entram num fluxo próprio, com 16 itens sorteados por lote, ao lado dos 64 itens de texto. A época continua definida pelo número de alvos de texto. Motivo: 4.297 itens só da cabeça, contra 1.848 digitais com texto, ocupariam cerca de 70% da parte digital de cada lote.
 
 ### 1.15 Limitações declaradas
 
