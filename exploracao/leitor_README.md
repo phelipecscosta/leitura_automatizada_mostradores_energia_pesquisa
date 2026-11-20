@@ -218,6 +218,11 @@ Um único modelo para as três classes (S0, E53).
 
 R1 (20/11/2026, antes do primeiro treino). A amostragem por classes iguais (B-b, seção 1.12) vale para os itens com alvo de texto. Os itens que treinam só a cabeça “duas leituras” (marca do professor, seção 1.3) entram num fluxo próprio, com 16 itens sorteados por lote, ao lado dos 64 itens de texto. A época continua definida pelo número de alvos de texto. Motivo: 4.297 itens só da cabeça, contra 1.848 digitais com texto, ocupariam cerca de 70% da parte digital de cada lote.
 
+R2 (20/11/2026, antes do primeiro treino).
+(a) Candidatos: L1; L2-9 e L2-12, com as 9 e as 12 primeiras camadas da MobileNetV3-Small, em que os passos que fariam o passo total passar de 8 na altura e 4 na largura são trocados por 1. Vence o mais rápido (p95) cujo limite inferior do IC da diferença de M-c para o melhor fique acima de −3 pontos. Motivo: o prefixo que termina no passo 8 tem só 4 camadas (cerca de 10 mil parâmetros), e a comparação não isolaria o pré-treino; a latência medida mostra que a BiLSTM domina o custo.
+(b) Sementes: o limiar alto e a M-c são calculados por semente, e vale a média das três; o bootstrap reamostra os recortes com os limiares fixos. Motivo: o produto usa uma rede.
+(c) Orientação: a leitura a 180° só é feita quando a de 0° não fica na faixa alta, e vale a de maior confiança. Motivo: o giro ocorre em cerca de 0,3% dos recortes.
+
 ### 1.15 Limitações declaradas
 
 - Os alvos privilegiam os recortes fáceis: só entra o que o professor leu inteiro
