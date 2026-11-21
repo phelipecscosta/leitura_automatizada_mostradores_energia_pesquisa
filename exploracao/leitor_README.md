@@ -231,6 +231,8 @@ R5 (20/11/2026, antes dos treinos válidos). Só a cabeça do texto treina a esp
 
 R6 (20/11/2026, antes dos treinos válidos). Até 240 épocas (seção 1.12, R3), com o cronograma cosseno no mesmo comprimento; o alarme de subtreino da R3 passa a olhar as épocas de 216 a 240. Motivo: no diagnóstico só com o texto (4.000 passos, primeira dobra), o L1 saiu do platô entre os passos 2.500 e 3.000, e o L2-9 perto do passo 1.000; com 120 épocas (cerca de 4.400 passos), o L1 seria comparado sem ter terminado de aprender, e a regra da seção 1.9 não isolaria o efeito do pré-treino (O3).
 
+R7 (21/11/2026, depois das predições fora da dobra dos candidatos, antes da regra de escolha). O leitor lê só a 0 grau (O-a), substituindo a O-b reduzida (seção 1.4) e o item (c) da R2. Motivo: nas predições fora da dobra, a escolha da rotação pela confiança ficou com 180 graus em 12% a 24% dos itens, contra cerca de 0,3% de recortes girados na rotulagem, e reduziu o acerto exato em 1,4 (L1), 3,6 (L2-9) e 3,9 (L2-12) pontos; nos itens trocados, o acerto a 180 graus foi de 0,3% a 1,6%. A rede, sem giros de 180 graus no treino, dá leituras confiantes a recortes invertidos. A mudança vale igualmente para os três candidatos e não altera a regra de escolha; os recortes girados vão para "Verificar" ou "Falha na extração" pela confiança.
+
 ### 1.15 Limitações declaradas
 
 - Os alvos privilegiam os recortes fáceis: só entra o que o professor leu inteiro
