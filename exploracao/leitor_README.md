@@ -239,7 +239,7 @@ R9 (21/11/2026, antes do treino das ablações). Os 868 recortes ciclométricos 
 
 (a) o rótulo é o número sem o tambor decimal (D-a), com uma marca de presença do tambor decimal;
 (b) [ab] só quando nenhum algarismo aparece inteiro na janela (TR-a), resolvido pela T-a;
-(c) ilegível, girado ou cortado não viram alvo.
+(c) ilegível, girado (rotação de mais de 45 graus: de lado ou de cabeça para baixo) ou cortado não viram alvo; recortes inclinados até 45 graus, lidos no sentido normal, são rotulados, com uma marca acima de cerca de 15 graus.
 
 Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita.
 
