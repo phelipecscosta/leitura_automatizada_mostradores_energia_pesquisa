@@ -233,6 +233,20 @@ R6 (20/11/2026, antes dos treinos válidos). Até 240 épocas (seção 1.12, R3)
 
 R7 (21/11/2026, depois das predições fora da dobra dos candidatos, antes da regra de escolha). O leitor lê só a 0 grau (O-a), substituindo a O-b reduzida (seção 1.4) e o item (c) da R2. Motivo: nas predições fora da dobra, a escolha da rotação pela confiança ficou com 180 graus em 12% a 24% dos itens, contra cerca de 0,3% de recortes girados na rotulagem, e reduziu o acerto exato em 1,4 (L1), 3,6 (L2-9) e 3,9 (L2-12) pontos; nos itens trocados, o acerto a 180 graus foi de 0,3% a 1,6%. A rede, sem giros de 180 graus no treino, dá leituras confiantes a recortes invertidos. A mudança vale igualmente para os três candidatos e não altera a regra de escolha; os recortes girados vão para "Verificar" ou "Falha na extração" pela confiança.
 
+R8 (21/11/2026, antes do treino das ablações). O leitor por família (seção 1.9, item 4) é um especialista por ajuste fino. Ele parte dos pesos da configuração adotada, da mesma dobra e da mesma semente, e continua o treino só com os itens de texto ciclométricos dos lotes de treino (e os pseudo-rótulos ciclométricos, se o autotreinamento for adotado). Regras: lotes de 64 ciclométricos; taxa de 1/10 da do candidato; aquecimento de 1 época e cosseno; 60 épocas com os passos por época da configuração adotada; época escolhida pela M-a interna dos ciclométricos, com a época 0 (o modelo de partida) entre as opções. A comparação e a regra de adoção não mudam. Motivo: treinado a partir do ImageNet com cerca de 210 ciclométricos, o especialista partiria sem o que o modelo único aprendeu com os outros cerca de 2.200 recortes; a comparação mediria a falta de dados, e não o ganho de especializar. Incerteza: a divisão interna tem cerca de 25 ciclométricos por dobra, e a escolha da época é ruidosa.
+
+R9 (21/11/2026, antes do treino das ablações). Os 868 recortes ciclométricos dos lotes de desenvolvimento sem alvo de texto (professor: 260 discorda, 122 parcial, 23 erro de formato, 463 ilegível) recebem rotulagem humana às cegas. A leitura é digitada sem ver o CSV; se diferir do CSV, o CSV é mostrado e o rotulador mantém, corrige ou marca ilegível. Regras:
+
+(a) o rótulo é o número sem o tambor decimal (D-a), com uma marca de presença do tambor decimal;
+(b) [ab] só quando nenhum algarismo aparece inteiro na janela (TR-a), resolvido pela T-a;
+(c) ilegível, girado ou cortado não viram alvo.
+
+Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita.
+
+Motivo, pelo diagnóstico do L2-12 fora da dobra: o acerto dos ciclométricos cai de 0,919 nos vistos para 0,618 na divisão interna e para 0,474 no lote fora da dobra (variância e mudança entre lotes), e os rótulos aceitos privilegiam os recortes fáceis (acerto de 0,491 no haiku_csv e de 0,378 no sonnet_csv).
+
+Consequências: a M-c dos ciclométricos passa a incluir os recortes difíceis e deixa de ser comparável com a da seção 2 anterior a esta revisão. A decisão foi informada por erros fora da dobra, o que torna as comparações seguintes um pouco otimistas; o juiz sem viés é o lote 03/07. Um único rotulador.
+
 ### 1.15 Limitações declaradas
 
 - Os alvos privilegiam os recortes fáceis: só entra o que o professor leu inteiro
