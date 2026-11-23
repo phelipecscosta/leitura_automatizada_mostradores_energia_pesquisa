@@ -254,6 +254,12 @@ D1: a cabeça de duas leituras passa a usar a média, no tempo, dos atributos do
 Reserva (D2): se a D1 não for adotada, na ET6c o digital fora da faixa alta é relido pela faixa de cima, e a confirmação falsa dessa segunda tentativa é medida.
 Em qualquer caso, o validador 13.3 (ET6c) só aceita a função com confiança mínima.
 
+R12 (23/11/2026, antes do retreino das cabeças). A F-b1 foi adotada pela regra da R11 (revocação média por classe de 0,285 para 0,402), mas 54% dos 103 continuam lidos como consumo, e em 11 de 98 displays com função que não é de consumo (IC 95% de 5,7% a 19,2%) o valor mostrado é igual ao do CSV. Nesses casos, só a função barra a aprovação.
+
+Rotulagem: a função dos 1.481 digitais da fila F-2 ainda sem julgamento recebe rotulagem humana às cegas: sem a função do professor e sem o CSV. É anotado o código como aparece, "vazio" ou "ilegível". Na dúvida entre dois códigos, ilegível. Só a função é julgada; o treino do texto não muda.
+Uso: os códigos rotulados entram como itens só de função (o recorte inteiro, ou a faixa de cima quando o professor marcou duas leituras), no treino e na avaliação fora da dobra. As cabeças são retreinadas como na R11. A cabeça nova e a F-b1 são comparadas no conjunto ampliado, as duas com predições refeitas, pela regra da R11 (revocação média por classe). Relatam-se o acerto com 03 = 003, a fração de 103 lidos como consumo e a fração de funções que não são de consumo lidas como consumo, por código.
+Motivo: só 67 exemplos de 103 no total (variância por falta de dados, como nos ciclométricos da R9).
+
 Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita.
 
 Motivo, pelo diagnóstico do L2-12 fora da dobra: o acerto dos ciclométricos cai de 0,919 nos vistos para 0,618 na divisão interna e para 0,474 no lote fora da dobra (variância e mudança entre lotes), e os rótulos aceitos privilegiam os recortes fáceis (acerto de 0,491 no haiku_csv e de 0,378 no sonnet_csv).
