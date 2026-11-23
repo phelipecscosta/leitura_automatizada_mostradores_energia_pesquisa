@@ -241,6 +241,11 @@ R9 (21/11/2026, antes do treino das ablações). Os 868 recortes ciclométricos 
 (b) [ab] só quando nenhum algarismo aparece inteiro na janela (TR-a), resolvido pela T-a;
 (c) só vira alvo o recorte com todos os tambores legíveis (a transição conta como legível). Não viram alvo: ilegível (algum dígito ilegível por sujeira, reflexo ou desfoque), obstruído (algo à frente dos tambores ou parte deles fora do recorte) e girado (rotação de 45 a 90 graus, ou de 180 graus). Recortes inclinados de 15 a 44 graus são rotulados, com uma marca; abaixo de 15 graus, sem marca. Os recortes que um humano julgou sem alvo (F-2 e R9) deixam de ser candidatos a pseudo-rótulo (seção 1.10): o julgamento humano prevalece sobre o do modelo.
 
+R10 (23/11/2026, antes do cálculo do limiar inferior e do comitê).
+
+(a) Limiar inferior: calculado separadamente com as confianças fora da dobra de cada semente da configuração final. O adotado é a mediana dos três. A leitura de cada recorte da amostra é a do produto: recorte inteiro e, num digital em que a cabeça de duas leituras dispara, a faixa de cima (D-b). Recorte sem leitura extraída tem confiança −∞ e fica abaixo de qualquer limiar. Se o comitê for adotado, o limiar é recalculado com a confiança do comitê.
+(b) Comitê das 3 sementes: para cada recorte, a probabilidade de uma sequência é a média das probabilidades dos 3 modelos da dobra. A leitura livre é, entre as leituras livres dos 3, a de maior probabilidade média. A confiança e a probabilidade do valor do CSV seguem a mesma média. Os limiares altos são recalculados pela regra da seção 1.7. O comitê é comparado com o modelo único (M-c média das sementes) por bootstrap pareado por recorte. É adotado se a diferença de M-c tiver o IC acima de zero e a latência p95 dos 3 modelos em sequência (CPU, 4 threads, lote 1) for de no máximo 50 ms.
+
 Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita.
 
 Motivo, pelo diagnóstico do L2-12 fora da dobra: o acerto dos ciclométricos cai de 0,919 nos vistos para 0,618 na divisão interna e para 0,474 no lote fora da dobra (variância e mudança entre lotes), e os rótulos aceitos privilegiam os recortes fáceis (acerto de 0,491 no haiku_csv e de 0,378 no sonnet_csv).
