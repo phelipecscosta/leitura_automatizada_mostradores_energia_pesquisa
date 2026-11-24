@@ -239,7 +239,7 @@ R9 (21/11/2026, antes do treino das ablações). Os 868 recortes ciclométricos 
 
 (a) o rótulo é o número sem o tambor decimal (D-a), com uma marca de presença do tambor decimal;
 (b) [ab] só quando nenhum algarismo aparece inteiro na janela (TR-a), resolvido pela T-a;
-(c) só vira alvo o recorte com todos os tambores legíveis (a transição conta como legível). Não viram alvo: ilegível (algum dígito ilegível por sujeira, reflexo ou desfoque), obstruído (algo à frente dos tambores ou parte deles fora do recorte) e girado (rotação de 45 a 90 graus, ou de 180 graus). Recortes inclinados de 15 a 44 graus são rotulados, com uma marca; abaixo de 15 graus, sem marca. Os recortes que um humano julgou sem alvo (F-2 e R9) deixam de ser candidatos a pseudo-rótulo (seção 1.10): o julgamento humano prevalece sobre o do modelo.
+(c) só vira alvo o recorte com todos os tambores legíveis (a transição conta como legível). Não viram alvo: ilegível (algum dígito ilegível por sujeira, reflexo ou desfoque), obstruído (algo à frente dos tambores ou parte deles fora do recorte) e girado (rotação de 45 a 90 graus, ou de 180 graus). Recortes inclinados de 15 a 44 graus são rotulados, com uma marca; abaixo de 15 graus, sem marca. Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita. Motivo, pelo diagnóstico do L2-12 fora da dobra: o acerto dos ciclométricos cai de 0,919 nos vistos para 0,618 na divisão interna e para 0,474 no lote fora da dobra (variância e mudança entre lotes), e os rótulos aceitos privilegiam os recortes fáceis (acerto de 0,491 no haiku_csv e de 0,378 no sonnet_csv). Consequências: a M-c dos ciclométricos passa a incluir os recortes difíceis e deixa de ser comparável com a da seção 2 anterior a esta revisão. A decisão foi informada por erros fora da dobra, o que torna as comparações seguintes um pouco otimistas; o juiz sem viés é o lote 03/07. Um único rotulador. Os recortes que um humano julgou sem alvo (F-2 e R9) deixam de ser candidatos a pseudo-rótulo (seção 1.10): o julgamento humano prevalece sobre o do modelo.
 
 R10 (23/11/2026, antes do cálculo do limiar inferior e do comitê).
 
@@ -256,17 +256,21 @@ Em qualquer caso, o validador 13.3 (ET6c) só aceita a função com confiança m
 
 R12 (23/11/2026, antes do retreino das cabeças). A F-b1 foi adotada pela regra da R11 (revocação média por classe de 0,285 para 0,402), mas 54% dos 103 continuam lidos como consumo, e em 11 de 98 displays com função que não é de consumo (IC 95% de 5,7% a 19,2%) o valor mostrado é igual ao do CSV. Nesses casos, só a função barra a aprovação.
 
-R13 (23/11/2026, durante o julgamento da P8). A lista de causas da seção 1.13 ganha "segmento fantasma" (segmento desligado de um display LCD que aparece levemente visível e é lido como aceso) e "tambor em transição" (tambor girando de verdade entre dois números; a transição aparente, pelo ângulo da foto, conta como inclinação ou perspectiva). Motivo: casos frequentes encontrados no julgamento. Os pares mais confundidos nos digitais diferem por um único segmento (5 e 9, 6 e 8, 9 e 8, 3 e 9), e o último tambor responde por metade dos erros de um dígito nos ciclométricos. O gatilho dos cantos não muda.
+R13 (23/11/2026, durante o julgamento da P8). A lista de causas da seção 1.13 ganha:
+
+"segmento fantasma": segmento desligado de um display LCD que aparece levemente visível e é lido como aceso;
+"tambor em transição": tambor girando de verdade entre dois números; a transição aparente, pelo ângulo da foto, conta como inclinação ou perspectiva;
+"linha errada": display de duas leituras em que o leitor leu a de baixo.
+
+Motivo: casos frequentes encontrados no julgamento. Os pares mais confundidos nos digitais diferem por um único segmento (5 e 9, 6 e 8, 9 e 8, 3 e 9); o último tambor responde por metade dos erros de um dígito nos ciclométricos; e a cabeça de duas leituras encontra 56% dos displays de duas linhas. O gatilho dos cantos não muda.
 
 Rotulagem: a função dos 1.481 digitais da fila F-2 ainda sem julgamento recebe rotulagem humana às cegas: sem a função do professor e sem o CSV. É anotado o código como aparece, "vazio" ou "ilegível". Na dúvida entre dois códigos, ilegível. Só a função é julgada; o treino do texto não muda.
 Uso: os códigos rotulados entram como itens só de função (o recorte inteiro, ou a faixa de cima quando o professor marcou duas leituras), no treino e na avaliação fora da dobra. As cabeças são retreinadas como na R11. A cabeça nova e a F-b1 são comparadas no conjunto ampliado, as duas com predições refeitas, pela regra da R11 (revocação média por classe). Relatam-se o acerto com 03 = 003, a fração de 103 lidos como consumo e a fração de funções que não são de consumo lidas como consumo, por código.
 Motivo: só 67 exemplos de 103 no total (variância por falta de dados, como nos ciclométricos da R9).
 
-Os rótulos passam a uma nova versão, com SHA-256 próprio. A configuração de partida (L2-12) é retreinada com eles, e os artefatos anteriores dela são arquivados; a escolha do candidato (seção 1.9) não é refeita.
+R14 (23/11/2026, antes da ampliação da amostra L-a). Com o comitê adotado, o limiar inferior recalculado (R10, a) ficou em log −1,585, com 5 "sim" em 55 recortes abaixo (9,1%): um "sim" a mais o invalidaria. A amostra de legibilidade é ampliada de 300 para 600 recortes: os 300 seguintes da mesma ordem sorteada, julgados pelos mesmos critérios e sem ver as confianças. O limiar é recalculado uma vez, com a confiança do comitê, sobre os 600, sem nova ampliação. Ampliar depois de ver o resultado é uma decisão condicionada ao dado, declarada aqui.
 
-Motivo, pelo diagnóstico do L2-12 fora da dobra: o acerto dos ciclométricos cai de 0,919 nos vistos para 0,618 na divisão interna e para 0,474 no lote fora da dobra (variância e mudança entre lotes), e os rótulos aceitos privilegiam os recortes fáceis (acerto de 0,491 no haiku_csv e de 0,378 no sonnet_csv).
 
-Consequências: a M-c dos ciclométricos passa a incluir os recortes difíceis e deixa de ser comparável com a da seção 2 anterior a esta revisão. A decisão foi informada por erros fora da dobra, o que torna as comparações seguintes um pouco otimistas; o juiz sem viés é o lote 03/07. Um único rotulador.
 
 ### 1.15 Limitações declaradas
 
