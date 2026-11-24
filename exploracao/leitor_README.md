@@ -287,6 +287,9 @@ R15-b (24/11/2026, depois do julgamento Q-a e antes de qualquer medida da curva 
 (a) Substitui o ajuste do item (c) da R15, que somava a fração fixa k/300 aos não julgados aprovados e não dava crédito à cabeça da função. Estimador de razão: em cada limiar t, sejam m(t) os aceitos julgados aprovados em t e k(t) os de função que não é consumo entre eles; aos u(t) aceitos não julgados aprovados em t somam-se ⌈u(t) × k(t)/m(t)⌉ erros. Se m(t) = 0, usa-se a fração geral, 2/298. Os 2 julgados sem função (ilegível e não digital) saem da medida. Revisão feita depois de ver o resultado do Q-a e antes da curva; declarada como tal.
 (b) Se nenhum limiar cumprir a regra do item (d) da R15, a medida conta como 0% dos consumos mantidos e o gatilho G-a dispara (F-x4). Se, com a F-x4, ainda nenhum limiar cumprir, os digitais vão para "Verificar" com "Função incorreta", e a regra da função fica como pendência a negociar com o cliente.
 
+R15-c (24/11/2026, depois da medida da R15 e antes de qualquer treino da F-x4). Resultado da medida: nenhum limiar cumpre o Y-f2 (menor limite superior de 0,95%, em t = 0,70, com 66% dos consumos mantidos); a partir de t = 0,62 os erros projetados são 0 (os dois 24 do Q-a têm consumo previsto de 0,29 e 0,59) e o piso vem dos erros rotulados diretos (8 em t = 0,62; 4 em t = 0,81). O gatilho G-a disparou.
+Correção do item (e) da R15: a faixa esquerda de 40% redimensionada para 48 × 96 dá ao código só 1,25 vez a escala horizontal do recorte inteiro (192/W contra 240/W) e a mesma vertical, o que não testa a hipótese da resolução. A F-x4 passa a usar a faixa esquerda de 40% (do recorte inteiro, ou da faixa de cima quando a D1 dispara) redimensionada para 96 × 192, com o mesmo tronco (L2-12, passo de 8 × 4) e a mesma cabeça da F-b1. O resto do item (e) se mantém. A comparação com a R12 abre os erros diretos por origem do rótulo e por código.
+
 
 
 ### 1.15 Limitações declaradas
