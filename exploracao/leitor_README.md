@@ -286,3 +286,103 @@ R14 (23/11/2026, antes da ampliação da amostra L-a). Com o comitê adotado, o 
 - A faixa de 0 a 55% da altura nos displays de duas leituras é uma regra fixa,
   sem medição prévia.
 - Os pesos ImageNet do L2 não declaram licença (mesma situação das E28 e E85).
+
+## 2. Resultados (ET6b, 20 a 23/11/2026)
+
+Predições fora da dobra (3 lotes de desenvolvimento x 3 sementes); o lote 03/07 não
+foi usado. Números com 3 sementes são médias, salvo indicação.
+
+### 2.1 Candidatos (seção 1.9; rótulos da ET6a)
+
+| Candidato | M-a interna | M-c fora da dobra | Latência p95 (CPU, 4 threads) |
+| --- | --- | --- | --- |
+| L1 | 0,244 (0,013 a 0,558) | 0,231 | 9,0 ms |
+| L2-9 | 0,672 | 0,607 | 9,0 ms |
+| L2-12 | 0,706 | 0,638 | 11,5 ms |
+
+L2-9 contra L2-12: diferença de M-c de -0,031, IC 95% [-0,043; -0,019]; não é
+não inferior (Δ = 3 pontos). Vencedor: L2-12. Sem alarme de subtreino.
+
+### 2.2 Diagnóstico dos ciclométricos e rotulagem R9
+
+Acerto exato do L2-12 nos ciclométricos: 0,919 nos vistos, 0,618 na divisão interna
+e 0,474 fora da dobra (variância e mudança entre lotes). Erros: 14% no último tambor,
+14% com dígito a mais ou a menos. Rotulagem R9 dos 868 recortes sem alvo: 278 alvos
+novos, 463 ilegíveis, 115 que não eram ciclométricos, 12 obstruídos. Dos 1.216
+recortes ciclométricos do desenvolvimento, 51% são legíveis. Mantidos contra o CSV:
+44, dos quais 15 com a mesma leitura do Haiku.
+
+### 2.3 Autotreinamento e ablações (seções 1.9 e 1.10; R8 e R9)
+
+| Fase | Diferença de M-c | IC 95% | Decisão |
+| --- | --- | --- | --- |
+| Autotreinamento, rodada 1 (cerca de 900 pseudo-rótulos por dobra) | +0,040 (0,633 para 0,673) | [+0,032; +0,049] | Adotado |
+| Gatilho da S-b (ciclométricos) | +0,029 | [+0,009; +0,051] | Não dispara |
+| Cinza | -0,015 | [-0,023; -0,006] | Não adotado |
+| Sem `sonnet_csv` | -0,010 | [-0,018; -0,002] | Não adotado |
+| Leitor por família (R8, ajuste fino) | -0,004 | [-0,011; +0,003] | Não adotado; época 0 em 7 de 9 treinos |
+
+Configuração adotada: L2-12+auto1. Limiar alto de -inf em todas as classes e
+sementes (a igualdade com o CSV já basta); limite superior da confirmação falsa dos
+impostores de 0,041 a 0,045 nos ciclométricos, de 0,025 a 0,027 nos digitais e de
+0,009 a 0,010 nos números de série. Cobertura: 0,471 nos ciclométricos, 0,743 nos
+digitais e 0,805 nos números de série.
+
+### 2.4 Comitê das 3 sementes (R10, b)
+
+M-c de 0,710 contra 0,673 do modelo único: diferença de +0,037, IC 95% [+0,030;
++0,043]. Latência p95 dos 3 modelos de 29,5 ms (máquina em uso normal). Adotado.
+
+### 2.5 Confiança (seção 1.6)
+
+Temperatura ajustada pela entropia cruzada entre a confiança da leitura livre e o
+acerto (nenhuma decisão depende dela). Texto: T = 1,79; ECE de 0,165 a 0,187 para
+0,031 a 0,071 no lote fora do ajuste. Função (cabeça de CTC): T = 1,60; ECE de 0,102
+a 0,135 para 0,023 a 0,071. A calibração do comitê não foi medida.
+
+### 2.6 Faixas e limiar inferior (seção 1.11; R10 e R14)
+
+Amostra L-a de 600 recortes de display (R14): 339 sim, 79 outro valor, 182 não dá
+para ler. Limiar inferior do comitê: log -1,599 (probabilidade 0,202), com 11 "sim"
+em 116 recortes abaixo (9,5%); com 300 recortes, tinha sido log -1,585. Na faixa
+alta: 197 recortes, nenhum "outro valor". Cobertura da faixa alta: 33% dos displays
+e 57,5% dos confirmáveis (60% nos digitais, 44% nos ciclométricos). Faixa muito
+baixa: 19% dos displays.
+
+### 2.7 Função e duas leituras (seção 1.8; R11 e R12)
+
+- Cabeça de CTC: acerto de 0,806; 66% dos 103 lidos como 03 ou 003 (F-b dispara).
+- F-b1 (classificação sobre o tronco congelado): revocação média por classe de 0,285
+  para 0,402, IC [+0,075; +0,162]; adotada.
+- D1 (duas leituras): AP de 0,137 para 0,618, IC [+0,424; +0,531]; revocação de 0,563
+  no limiar do F1 (precisão de 0,70 a 0,77); adotada.
+- Risco real (F-x0): em 11 de 98 displays com função que não é de consumo, o valor
+  mostrado é igual ao CSV (IC 95% [0,057; 0,192]); no 24, em 7 de 14.
+- R12: 1.481 recortes da F-2 julgados (1.067 com função, 167 vazios, 245 ilegíveis);
+  150 exemplos novos de 103. Revocação média por classe de 0,418 para 0,532, IC
+  [+0,078; +0,151]; adotada. Lidos como consumo: 103, de 56% para 35%; 24, de 47%
+  para 27%; 55, de 44% para 30%.
+- Limiar de P(03) + P(003): para aceitar no máximo 2% das outras funções como
+  consumo, só 9,7% dos consumos passam (3,4% pelo limite superior). A função não
+  atinge os critérios da seção 1.8.
+
+### 2.8 Casos reais de CSV diferente do valor verdadeiro
+
+Ciclométricos (R9): 0 confirmações falsas em 117 leituras. Digitais (F-2): 13 em 324
+(5 recortes); no julgamento, em 2 o CSV estava certo, em 2 ficou indefinido e em 1 o
+rótulo estava certo.
+
+### 2.9 Análise de erros (seção 1.13; R13)
+
+50 erros (20 digitais, 16 números de série, 14 ciclométricos): outro 23, borrão 11,
+reflexo 5, segmento fantasma 5 (todos digitais), campo cortado 2, inclinação ou
+perspectiva 1, oclusão 1, transição 1, linha errada 1, rótulo errado 0. Gatilho dos
+cantos: 2%, não dispara. Campo cortado: 4%, abaixo de 10%. Função 103 lida como
+consumo: o "1" nítido em 8 de 10.
+
+### 2.10 Limitações acrescentadas
+
+- Várias decisões (R9, R11, R12, R14) foram informadas por resultados fora da dobra;
+  as comparações seguintes ficam um pouco otimistas. O juiz sem viés é o lote 03/07.
+- Rotulagens R9, R12, L-a e P8 feitas por uma única pessoa.
+- A cobertura sobre os rótulos (M-c) é maior que a da população (amostra L-a).
