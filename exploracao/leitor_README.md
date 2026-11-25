@@ -298,6 +298,21 @@ R16 (24/11/2026, depois da medida da F-x4 e antes de qualquer julgamento da popu
 (d) Regra: para cada candidato, a regra (d) da R15 sobre a população-ouro (consumo = vazio, 03 e 003; erro = aprovado com função que não é consumo; grade nos 201 quantis do consumo; limite superior de 95% de no máximo 0,7%). Consumos mantidos: fração dos aprováveis de função de consumo com o consumo de pelo menos t. Vence o candidato que cumprir com mais consumos mantidos; empate dentro de 1 ponto: fica a R12. Se nenhum cumprir, vale o item (b) da R15-b.
 (e) A F-x4 não volta a ser avaliada (R11: não adotada).
 
+R17 (25/11/2026, depois do resultado da R16). Revisão posterior a um resultado, declarada. Na população-ouro, nenhum candidato cumpriu o Y-f2: o menor limite superior medido foi de cerca de 0,87% (R12, t ≈ 0,726, 5 erros em cerca de 1.190 aprovados, 61% dos consumos mantidos); a R12g ficou em 1,06%. Decisão do autor:
+(a) Meta do sistema (E35): precisão de pelo menos 99,0% nas aprovadas (risco de no máximo 1%), no lugar de 99,3%. Justificativa: a referência de 0,7% veio de 1 erro de anotação em 153 (IC de 95% de 0,1% a 3,6%, E23); 1% está dentro desse intervalo, e o princípio "não errar mais que o processo atual" (E09) segue plausível. O valor foi revisto depois de conhecer o limite demonstrável do modelo, e a confirmação pelo cliente fica pendente.
+(b) Orçamento da função (substitui o Y-f2): 1%, todo o orçamento do sistema (os demais erros das aprovadas são pequenos: CSV errado confirmado, cerca de 0,04%; medidor trocado, barrado pelo número de série).
+(c) Escolha do limiar (T-2, substitui o "menor t" do item d da R15): entre os limiares da grade que cumprem a meta, o de menor limite superior; em empate, o menor t. Motivo: o limiar vem de modelos de 2 lotes e é aplicado ao modelo final de 3 lotes (como na E25, E66 e E87), e a borda da meta não deixa folga para essa troca nem para a leitura do 03/07.
+(d) Com as curvas da R16 e esta meta, a R12 cumpre e a R12g não.
+(e) Limitação declarada: em 10,5% dos aprováveis, a função é ilegível para uma pessoa (a tecla F também marcava a dúvida entre dois códigos, como 03 e 103); a meta vale para os 89,5% com função legível. Com os ilegíveis contados como erro, o limite da R12 em t ≈ 0,726 é de 10,6%.
+(f) Motivo dos digitais retidos pela função (R-b): se a classe mais provável da cabeça não é de consumo, "Função incorreta", com a coluna Funcao em "Função incorreta - XX" (NAN na classe "outro"); senão, "Confiança baixa", com a coluna Funcao em "03" ou NAN.
+
+R18 (25/11/2026, antes de qualquer código ou treino do candidato). Classe "ilegível" na cabeça da função (I-b).
+(a) Candidato R12i: a receita da R11 sobre o tronco congelado de cada dobra, com os rótulos da R12 e uma única mudança: as fotos que uma pessoa julgou com função ilegível (R12, Q-a e R16) passam a ter a classe "ilegivel", a oitava, no lugar da função do professor; as julgadas como não digital perdem o rótulo de função. Pesos de classe como na R11 (inverso da frequência, agora com 8 classes). O consumo continua sendo P(vazio) + P(03) + P(003).
+(b) Medida: a da R16, na mesma população-ouro e com a mesma leitura e a mesma D1; meta e limiar pela R17 (c).
+(c) Adoção: a R12i substitui a R12 se, ao mesmo tempo, (i) cumprir a meta de 1%; (ii) aprovar, no seu limiar, uma fração menor dos aprováveis com função ilegível que a R12 no dela; e (iii) mantiver pelo menos 50% dos consumos (o piso do gatilho G-a). Se não, fica a R12, com a limitação da R17 (e).
+(d) Relata-se, para os dois candidatos: o limiar, os aprovados, os erros, o limite superior, os consumos mantidos, a fração dos ilegíveis aprovados e a sensibilidade com os ilegíveis contados como erro.
+(e) Não há outros candidatos nem novas receitas nesta etapa.
+
 
 ### 1.15 Limitações declaradas
 
