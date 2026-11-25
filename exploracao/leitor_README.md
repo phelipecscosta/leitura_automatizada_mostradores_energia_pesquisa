@@ -320,6 +320,12 @@ R19 (25/11/2026, antes da medida). Sensibilidade dos limiares ao TF32 (X-b).
 (d) A D1 (0 divergências na paridade, mesmo com o TF32 ligado) e a temperatura (só calibra a confiança informada) não são refeitas. Não há outras medidas nesta revisão.
 (e) Correção de (b), feita antes de qualquer medida: a primeira versão fixava a D1 em 3,063 também em (i), o que misturaria a troca do limiar da D1 com o efeito do TF32.
 
+R20 (25/11/2026, antes da medida). Faixa de confiança do número de série (S1-a).
+(a) Fato: no ensaio da T6c.7 (lote 22/05, que entrou no treino do modelo final), 745 fotos foram para "Verificar" com "Número do medidor divergente". O professor julgou ilegíveis ou parciais 428 desses recortes, e a inspeção visual do autor (103 recortes, 10 por categoria) confirmou a ilegibilidade em 9 de 10 dos julgados ilegíveis. O leitor escreve um texto mesmo numa placa ilegível, e o número de série não passa por nenhum limiar de confiança; o motivo "divergente" sugere troca de medidor onde a placa só é ilegível.
+(b) Regra no produto: quando o número lido difere do esperado e a confiança do comitê (T = 1) fica abaixo do limiar do número de série, o número conta como não localizado (motivo "Número do medidor não localizado"). Um número igual ao esperado não passa pelo limiar (a igualdade com o CSV é a faixa alta, E103). Nenhuma aprovação muda.
+(c) Medida: os recortes de número de série dos 3 lotes de desenvolvimento, lidos fora da dobra pelos modelos de 2 lotes (comitê das 3 sementes, TF32 desligado, G-a). Legível: professor "aceito" ou "discorda"; ilegível: "ilegivel" ou "parcial"; "erro_formato" fica fora. Limiar pela regra da R10 (V = 10%, pelo menos 30 abaixo).
+(d) Limitação: a legibilidade vem do professor, e não de pessoas; a concordância com o autor nos ilegíveis foi de 9 em 10, numa amostra pequena.
+(e) Não há outras medidas nesta revisão. O ensaio do 22/05 é refeito depois da mudança, para confirmar que as aprovações não mudam.
 
 ### 1.15 Limitações declaradas
 
