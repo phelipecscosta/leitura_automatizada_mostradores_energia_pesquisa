@@ -1,5 +1,5 @@
 # Gera os diagramas das arquiteturas "B" e "A"
-# Versão 3.2 (17/11/2026), decisões da ET4f, da ET5a e da ET5b:
+# Versão 3.3 (24/11/2026), decisões da ET4f à ET6b:
 # - triagem de cinco classes (digital, ciclométrico, indeterminado, múltiplos, outros) treinada com
 #   rótulos finos; modelo do produto: C4, MobileNetV3-Large destilada (ET4f);
 # - legibilidade retirada da triagem; Roteador de triagem com três saídas de rejeição;
@@ -11,8 +11,17 @@
 # - leitor com três faixas de confiança (muito baixa, intermediária e alta);
 # - nova pasta "Rejeitadas / Múltiplos";
 # - arquitetura A: detector único e leitores especializados por família (ablação da ET4c).
+# Mudanças da 3.3 (ET5c e ET6b):
+# - roteador de triagem pelo escore único (soma de outros, indeterminado e múltiplos >= 0,847),
+#   com o destino pela maior das três (E30, E56, E66);
+# - limiares fixados escritos no losango: segunda porta 0,0122 (E85) e limiar inferior 0,202 (E103);
+# - pré-processamento II sem cinza (E101) e sem retificação (E105): recorte com margem (E92),
+#   realce fixo e 48 x 192 em RGB;
+# - Validador 3 pela igualdade com o CSV, sem confiança mínima a mais (E103);
+# - leitor: comitê de 3 modelos, função (7 classes) e duas leituras (E102, E104);
+# - em vermelho, o que segue em aberto na ET6c: regra do dígito em transição e aceitação da função.
 # A numeração dos módulos (B1 a B15 e A1 a A18) foi mantida; as novas decisões pertencem a módulos existentes.
-# Uso: python gerar_arquiteturas.py  (salva PNG e JPG na pasta atual)
+# Uso: python "scrip_gerador_diagrama_arquiteturas_A_&_B.py"  (salva PNG e JPG na pasta atual)
 # Dependências: matplotlib e pillow
 import matplotlib
 matplotlib.use("Agg")
@@ -72,13 +81,17 @@ class Canvas:
         if txt:
             self.ax.text(x, y, txt, ha="center", va="center", fontsize=fs, zorder=4)
 
-    def losango_limiar(self, x, y, w, h, linha1, antes, depois="?"):
-        # Losango com o limiar 0.XX destacado em vermelho na segunda linha
+    def losango_limiar(self, x, y, w, h, linha1, antes, valor="0.XX", depois="?"):
+        # Losango com o limiar na segunda linha: em vermelho enquanto está em aberto ("0.XX")
         self.losango(x, y, w, h, "")
+        cor = VERMELHO if valor == "0.XX" else TEXTO
         self.ax.text(x, y + 1.2, linha1, ha="center", va="center", fontsize=10, zorder=5)
-        self.ax.text(x + 3.2, y - 1.3, antes, ha="right", va="center", fontsize=10, zorder=5)
-        self.ax.text(x + 3.2, y - 1.3, "0.XX", ha="left", va="center", fontsize=10, color=VERMELHO, zorder=5)
-        self.ax.text(x + 6.2, y - 1.3, depois, ha="left", va="center", fontsize=10, zorder=5)
+        self.ax.text(x, y - 1.3, f"{antes}{valor} {depois}", ha="center", va="center", fontsize=10,
+                     color=cor, zorder=5)
+
+    def aberto(self, x, y, txt, ha="left"):
+        # Nota de decisão em aberto, em vermelho
+        self.ax.text(x, y, txt, ha=ha, va="center", fontsize=10, style="italic", color=VERMELHO, zorder=4)
 
     def modulo(self, x, y, txt, ha="left"):
         self.ax.text(x, y, txt, ha=ha, va="center", fontsize=10, style="italic", color=VERDE, zorder=4)
@@ -215,22 +228,14 @@ def topo(cv, col, P):
                            "treino: rótulos finos (grupos)", "modelo: C4 (MobileNetV3-Large)"],
              w=31, h=3.0, gap=0.7)
 
-    # Roteador de triagem (Módulo 5): três saídas de rejeição, com limiares calibrados
-    y = col.proximo(9, gap=6)
-    cv.losango(X, y, 22, 9, "É medidor?")
-    cv.modulo(X + 12, y + 1.5, f"Módulo {P}5 - Roteador de triagem")
-    cv.modulo(X + 12, y - 1.5, "(regras sobre a triagem calibrada)")
-    col.rejeitar(y, X - 11, "Rejeitar - Outros", "Não", h=5)
-
-    y = col.proximo(10, rotulo="Sim")
-    cv.losango_limiar(X, y, 28, 10, "Indeterminado", "com P ≥ ")
-    cv.modulo(X + 15, y, f"(decisão do Módulo {P}5)")
-    col.rejeitar(y, X - 14, "Rejeitar - Baixa qualidade\n(Indeterminação do\ntipo de medidor)", "Sim", h=8, fs=9.5)
-
-    y = col.proximo(10, rotulo="Não")
-    cv.losango_limiar(X, y, 28, 10, "Múltiplos", "com P ≥ ")
-    cv.modulo(X + 15, y, f"(decisão do Módulo {P}5)")
-    col.rejeitar(y, X - 14, "Rejeitar -\nMúltiplos medidores", "Sim", h=6, fs=9.5)
+    # Roteador de triagem (Módulo 5): escore único de rejeição (soma das três probabilidades
+    # calibradas); a foto rejeitada vai para o destino da maior das três
+    y = col.proximo(10, gap=6)
+    cv.losango_limiar(X, y, 30, 10, "Escore de rejeição", "≥ ", valor="0,847")
+    cv.modulo(X + 16, y + 1.5, f"Módulo {P}5 - Roteador de triagem")
+    cv.modulo(X + 16, y - 1.5, "(outros + indeterminado + múltiplos)")
+    col.rejeitar(y, X - 15, "Rejeitar pela maior das três:\nOutros, Baixa qualidade\n(Indeterminação do tipo)\nou Múltiplos medidores",
+                 "Sim", h=10, fs=9)
 
     # Medidor listado nos Parâmetros? (Módulo 6, só atua quando a planilha é fornecida)
     y = col.proximo(10, rotulo="Não")
@@ -260,7 +265,7 @@ def detector_e_tipo(cv, col, P):
 
     # Segunda porta do indeterminado: nenhum campo (display ou número de série) acima do limiar
     y = col.proximo(10, gap=6)
-    cv.losango_limiar(X, y, 28, 10, "Campo localizado", "com conf. ≥ ")
+    cv.losango_limiar(X, y, 28, 10, "Campo localizado", "com conf. ≥ ", valor="0,0122")
     cv.modulo(X + 15, y, f"(decisão do Módulo {P}7)")
     col.rejeitar(y, X - 14, "Rejeitar - Baixa qualidade\n(Indeterminação do\ntipo de medidor)", "Não", h=8, fs=9.5)
 
@@ -280,12 +285,12 @@ def faixas_e_validadores(cv, col, P, n, origem, rotulo_entrada=None):
     X = col.X
     y = col.proximo(12, rotulo=rotulo_entrada)
     cv.losango(X, y, 30, 12, "Faixa de confiança\nda leitura?")
-    cv.modulo(X - 16, y + 6, f"({origem}; limiares 0.XX)", ha="right")
+    cv.modulo(X - 16, y + 6, f"({origem}; limiar inferior 0,202)", ha="right")
     col.rejeitar(y, X - 15, "Rejeitar - Baixa qualidade\n(Falha na extração)", "Muito baixa", h=6, fs=9.5)
     col.para_verificar(X + 15, y, "Intermediária")
 
     y = col.proximo(13, rotulo="Alta")
-    cv.losango_limiar(X, y, 36, 13, "Esperado = leitura livre", "e confiança ≥ ")
+    cv.losango(X, y, 36, 13, "Esperado =\nleitura livre?")
     cv.modulo(X - 19, y + 5, f"Módulo {P}{n} - Validador 3 (regra)", ha="right")
     cv.modulo(X - 19, y + 2, "número e leitura vs. CSV", ha="right")
     col.para_verificar(X + 18, y, "Não")
@@ -294,6 +299,7 @@ def faixas_e_validadores(cv, col, P, n, origem, rotulo_entrada=None):
     cv.losango(X, y, 40, 14, "Função = 03 (digital) e\nleitura nos Parâmetros\ne criticidade B?", fs=9.5)
     cv.modulo(X - 21, y + 4, f"Módulo {P}{n + 1} - Validador 4 (regra)", ha="right")
     cv.modulo(X - 21, y + 1, "(Parâmetros: só com planilha)", ha="right")
+    cv.aberto(X - 21, y - 2, "(regra de aceitação da função: ET6c)", ha="right")
     col.para_verificar(X + 20, y, "Não")
 
 
@@ -351,15 +357,15 @@ detector_e_tipo(cv, col, "B")
 
 X = col.X
 y = col.proximo(6, rotulo="Sim")
-cv.caixa(X, y, 30, 6, "Pré-processamento II\n(recorte, cinza, retificação)", fs=10)
+cv.caixa(X, y, 30, 6, "Pré-processamento II\n(recorte com margem, realce, 48 × 192)", fs=10)
 cv.modulo(X - 16, y, "Módulo B9 - Pré-processador 2", ha="right")
 
 y = col.proximo(7)
-cv.aprendido(X, y, 30, 7, "Leitura com verificação\n(CRNN + CTC)")
+cv.aprendido(X, y, 30, 7, "Leitura com verificação\n(CRNN + CTC, comitê de 3)")
 cv.modulo(X - 16, y, "Módulo B10 - Leitor", ha="right")
 cv.linha([(X + 15, y), (X + 16.3, y)])
-cv.lista(X + 17.5, y, ["leitura livre", "prob. da sequência esperada", "regra do dígito em transição",
-                       "confiança por campo"], w=24, h=3.0, gap=0.7, fs=9)
+cv.lista(X + 17.5, y, ["leitura livre", "função (7 classes) | duas leituras", "regra do dígito em transição",
+                       "confiança por campo"], w=24, h=3.0, gap=0.7, fs=9, abertos=(2,))
 
 faixas_e_validadores(cv, col, "B", 11, "decisão do Módulo B10", rotulo_entrada=None)
 y_min = base(cv, col, "B", 13, xb=101)
@@ -386,8 +392,8 @@ cv.modulo(PI - 2, y - 2.5, "Pipeline I", ha="right"); cv.modulo(PII + 2, y - 2.5
 # Pré-processamento por família
 y_pp = y - 10
 cv.seta([(PI, y), (PI, y_pp + 3.5)]); cv.seta([(PII, y), (PII, y_pp + 3.5)])
-cv.caixa(PI, y_pp, 24, 7, "Pré-processamento II\n(recorte, cinza,\nretificação)", fs=9.5)
-cv.caixa(PII, y_pp, 24, 7, "Pré-processamento III\n(recorte, cinza,\nretificação)", fs=9.5)
+cv.caixa(PI, y_pp, 24, 7, "Pré-processamento II\n(recorte com margem,\nrealce, 48 × 192)", fs=9.5)
+cv.caixa(PII, y_pp, 24, 7, "Pré-processamento III\n(recorte com margem,\nrealce, 48 × 192)", fs=9.5)
 cv.modulo(PI - 13.5, y_pp, "Módulo A10 - Pré-processador 2", ha="right")
 cv.modulo(PII + 13.5, y_pp, "Módulo A12 - Pré-processador 3")
 
@@ -400,11 +406,11 @@ cv.modulo(PI - 13.5, y_l + 1.4, "Módulo A11 - Leitor 1", ha="right")
 cv.modulo(PI - 13.5, y_l - 1.4, "(CRNN + CTC)", ha="right")
 cv.modulo(PII + 13.5, y_l + 9.6, "Módulo A13 - Leitor 2 (CRNN + CTC)")
 cv.linha([(PI + 12, y_l), (PI + 13.3, y_l)])
-cv.lista(PI + 14.5, y_l, ["leitura livre", "prob. da sequência esperada", "confiança por campo"],
+cv.lista(PI + 14.5, y_l, ["leitura livre", "função | duas leituras", "confiança por campo"],
          w=19, h=3.0, gap=0.7, fs=9)
 cv.linha([(PII + 12, y_l), (PII + 13.3, y_l)])
-cv.lista(PII + 14.5, y_l, ["leitura livre", "prob. da sequência esperada", "regra do dígito em transição",
-                           "confiança por campo"], w=19, h=3.0, gap=0.7, fs=9)
+cv.lista(PII + 14.5, y_l, ["leitura livre", "regra do dígito em transição", "confiança por campo"],
+         w=19, h=3.0, gap=0.7, fs=9, abertos=(1,))
 
 # Junção dos pipelines
 y_j = y_l - 4 - 3.5
