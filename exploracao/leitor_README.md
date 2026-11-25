@@ -342,6 +342,17 @@ R20 (25/11/2026, antes da medida). Faixa de confiança do número de série (S1-
   sem medição prévia.
 - Os pesos ImageNet do L2 não declaram licença (mesma situação das E28 e E85).
 
+### 1.16 Leitura única do teste 03/07 e avaliação A1-b (25/11/2026, antes da leitura)
+
+(a) Objeto (U-a): o sistema inteiro pelo comando `meter-reader analisar`, em CPU, sobre uma cópia do lote 03/07 na pasta de trabalho, com os artefatos da triagem C4 (`ee4fc0309027`), do detector S1_coco (`d0d0ff83f1c3`) e do leitor (`46f3ab72a367`). A triagem já foi lida no 03/07 (E68): os números dela que saírem daqui não são uma nova avaliação da triagem (E44).
+(b) Relatos do sistema: os status e os motivos, a fração de aprovadas sobre as imagens lidas e o tempo por imagem.
+(c) Auditoria das aprovadas (N-b, E96): todas as aprovadas. Cada item mostra a foto, o recorte do display e o do número de série, e os valores aprovados: a leitura, o número do medidor e, no digital, a função. Teclas: F confere, G não confere, D ilegível. "Não confere" se qualquer valor mostrado diferir da foto; "ilegível" se algum campo não puder ser lido com segurança.
+(d) Armadilhas de atenção: blocos de 50 aprovadas com 3 armadilhas em posições sorteadas. As armadilhas vêm das fotos do 03/07 que foram para "Verificar" só pela função (número de série e leitura já conferidos com o CSV), com um caractere trocado na leitura ou no número de série, de preferência num par parecido (0 e 8, 1 e 7, 5 e 6). Sorteios com as sementes "a1b-ordem" e "a1b-armadilhas". Duas armadilhas marcadas como "confere" no mesmo bloco (contadas pelas marcas atuais) fecham a ferramenta; as marcas daquele bloco são descartadas, e o bloco vai para o fim, com armadilhas novas. As armadilhas não entram na conta do risco; o número de blocos refeitos é relatado.
+(e) Exibição e controles: a leitura em grupos de 3 a partir da direita, o número de série em grupos de 4 a partir da esquerda e a função por extenso. O espaço alterna os modos de realce do recorte e da foto (original, autocontraste, equalização adaptativa e negativo), iguais para todos os itens; a tecla C troca a cor da caixa; as setas navegam; o Backspace volta um item e apaga a marca dele. O realce muda só a visualização.
+(f) Critério: risco = itens "não confere" sobre as aprovadas auditadas, com o limite superior unilateral de 95% (Clopper-Pearson). A meta (R17: no máximo 1%) é avaliada sem os itens ilegíveis; o limite com os ilegíveis contados como erro é relatado ao lado (I-b, como na R17 (e)).
+(g) Cobertura (E96): 200 fotos que chegaram ao leitor, sorteadas com a semente "a1b-cobertura", julgadas pelo recorte do display como legível, parcial ou ilegível, sem valores preenchidos e sem armadilhas. Cobertura = aprovadas entre as legíveis.
+(h) Leitura única: o 03/07 é lido uma vez. Nenhum modelo, limiar ou regra muda por causa dele. Um defeito de código descoberto na leitura é registrado e corrigido só para as etapas seguintes, sem nova leitura.
+
 ## 2. Resultados (ET6b, 20 a 23/11/2026)
 
 Predições fora da dobra (3 lotes de desenvolvimento x 3 sementes); o lote 03/07 não
