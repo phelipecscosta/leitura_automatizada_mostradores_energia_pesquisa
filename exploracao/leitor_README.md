@@ -353,6 +353,7 @@ R20 (25/11/2026, antes da medida). Faixa de confiança do número de série (S1-
 Relata-se também o resultado por campo (função, leitura e número): itens "não confere" e "ilegível" em cada um.
 (g) Cobertura (E96): 200 fotos que chegaram ao leitor, sorteadas com a semente "a1b-cobertura", julgadas pelo recorte do display como legível, parcial ou ilegível, sem valores preenchidos e sem armadilhas. Cobertura = aprovadas entre as legíveis.
 (h) Leitura única: o 03/07 é lido uma vez. Nenhum modelo, limiar ou regra muda por causa dele. Um defeito de código descoberto na leitura é registrado e corrigido só para as etapas seguintes, sem nova leitura.
+(i) Revisão de 25 e 26/11/2026, antes de qualquer contagem de resultados (V-a): por decisão do autor, a auditoria A1-b e a cobertura (g) não são feitas; as marcas feitas até a decisão não entram em nenhuma conta. Motivo: a concessionária vai validar as aprovadas na operação. O risco nas aprovadas fica declarado como não verificado no teste (como a meta da triagem na E68); a estimativa de desenvolvimento segue sendo a da R16 a R18 (limite superior de 0,86%). Pede-se ao cliente o retorno das contagens da validação dele (aprovadas conferidas e erradas, por campo), sem fotos nem nomes.
 
 ## 2. Resultados (ET6b, 20 a 23/11/2026)
 
